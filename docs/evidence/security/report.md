@@ -1,6 +1,6 @@
 # ClearDesk security rehearsal
 
-2026-11-18T13:03:19.304Z · **PASS** · 15/15 cases passed
+2026-11-18T13:08:04.117Z · **PASS** · 15/15 cases passed
 
 Mode: deterministic adversarial and recording fixtures. This is not live Gemini evidence.
 
@@ -26,9 +26,9 @@ Mode: deterministic adversarial and recording fixtures. This is not live Gemini 
 
 ```json
 {
-  "sourceRevision": "52c19443584572c217299b9aed71f1146d5618fa",
+  "sourceRevision": "c07965c41f17b0ae30f7b19395b8d36d317e6f15",
   "sourceTreeSha256": "b9bee3876df7413a0dba58501f88f3596e9570f18fc0b95ac25e355f9b7583eb",
-  "workingTreeDirty": true,
+  "workingTreeDirty": false,
   "corpusSha256": "4e52bffcfff2f9cd945f9c05b5d7bb5444212e8f26b47bdf17aff543224a9af8",
   "embeddingManifestSha256": "7abeb180b9c205b60f1094e7deba05e39e36a92b7a7356c6fd4b412552757cb7",
   "node": "24.14.0",

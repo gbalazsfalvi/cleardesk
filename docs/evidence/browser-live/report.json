@@ -1,14 +1,25 @@
 {
   "kind": "live-gemini-browser",
   "status": "PASS",
-  "generatedAt": "2026-11-18T12:06:18.396Z",
+  "generatedAt": "2026-11-18T13:09:17.807Z",
+  "provenance": {
+    "sourceRevision": "c07965c41f17b0ae30f7b19395b8d36d317e6f15",
+    "sourceTreeSha256": "b9bee3876df7413a0dba58501f88f3596e9570f18fc0b95ac25e355f9b7583eb",
+    "workingTreeDirty": false,
+    "corpusSha256": "4e52bffcfff2f9cd945f9c05b5d7bb5444212e8f26b47bdf17aff543224a9af8",
+    "embeddingManifestSha256": "7abeb180b9c205b60f1094e7deba05e39e36a92b7a7356c6fd4b412552757cb7",
+    "node": "24.14.0",
+    "python": "3.13.1",
+    "mastra": "1.84.0",
+    "googleAdapter": "4.0.122"
+  },
   "model": {
     "mode": "live",
     "id": "gemini-3.5-flash-lite",
     "version": "gemini-3.5-flash-lite"
   },
   "generationRequests": 1,
-  "budgetSpent": 7,
+  "budgetSpent": 8,
   "limit": 12,
   "usage": {
     "calls": 1,
@@ -22,5 +33,7 @@
     "noExternalBrowserRequests": true
   },
   "screenshot": "docs/images/live-answer-and-source.png",
-  "screenshotSha256": "f7421144c619cd1911686d4f7e2cde3071fc5ca3a17019dfd763ce3f6cfb80a3"
+  "capture": "screenshot.png",
+  "screenshotSha256": "e6670b6a8ce3e10c72c69b0df12fad8d44320e3346d38a063a5146ffc1890817",
+  "errorCode": null
 }

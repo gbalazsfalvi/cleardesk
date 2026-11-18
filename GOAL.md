@@ -2,24 +2,24 @@
 
 **Target:** 18 November 2026, 23:59 Europe/Budapest (22:59 UTC).
 **Deliverable:** a complete local, GitHub-ready internal knowledge assistant with a polished English interface and inspectable security evidence.
-**Current status:** implementation and security/model evaluations are in place; final acceptance and local release integration are in progress.
+**Current status:** verified local v0.1.0 reference completed; public publication remains separate.
 
 The deadline is a target. Completion is determined by actual acceptance checks, never by weakening controls or inventing results.
 
 ## Definition of done
 
-- [ ] One command bootstraps/builds/starts the owned local application and data service; another verifies it and generates a fresh security report.
-- [ ] Users can authenticate, select an authorized workspace, ask grounded questions, open authorized sources and revisit their own appropriately redacted history.
-- [ ] Administrators can ingest bounded text/Markdown documents, set workspace/HR visibility and revoke access by ACL changes or deletion.
-- [ ] Mastra is used in the real Gemini path; the authorized credential remains private and server-side. Agent-run live generation requests stay within the cap of 12.
-- [ ] DuckDB has one Python owner, serialized transactions and bounded retrieval/embedding work. Node never opens the database file.
-- [ ] Tenant, document, conversation and tool boundaries hold under deterministic adversarial-model tests. A separate unscoped-retrieval positive control demonstrates that the test detects context exposure.
-- [ ] Current access is checked at retrieval/source/history access and before storing/returning an answer. Citation identifiers belong to the actual authorized context registry.
-- [ ] Output cannot execute raw HTML or trigger automatic external content loads; requests, queue depth, tool steps and provider usage are bounded.
-- [ ] Meaningful TypeScript/Python/database/API/browser checks pass. A bounded live Gemini evaluation records actual model/provider identifiers and outcomes separately from fixtures.
-- [ ] Sanitized JSON, Markdown and standalone HTML reports, SHA-256 inventories and actual desktop/mobile screenshots are available.
-- [ ] README, API, architecture, threat model, decisions, limitations, licences/notices, pinned dependencies and a prepared CI workflow match the implementation.
-- [ ] Final clean local verification/rehearsal passes and the local source history/release state matches the reported evidence.
+- [x] One command bootstraps/builds/starts the owned local application and data service; another verifies it and generates a fresh security report.
+- [x] Users can authenticate, select an authorized workspace, ask grounded questions, open authorized sources and revisit their own appropriately redacted history.
+- [x] Administrators can ingest bounded text/Markdown documents, set workspace/HR visibility and revoke access by ACL changes or deletion.
+- [x] Mastra is used in the real Gemini path; the authorized credential remains private and server-side. Agent-run live generation requests stay within the cap of 12.
+- [x] DuckDB has one Python owner, serialized transactions and bounded retrieval/embedding work. Node never opens the database file.
+- [x] Tenant, document, conversation and tool boundaries hold under deterministic adversarial-model tests. A separate unscoped-retrieval positive control demonstrates that the test detects context exposure.
+- [x] Current access is checked at retrieval/source/history access and before storing/returning an answer. Citation identifiers belong to the actual authorized context registry.
+- [x] Output cannot execute raw HTML or trigger automatic external content loads; requests, queue depth, tool steps and provider usage are bounded.
+- [x] Meaningful TypeScript/Python/database/API/browser checks pass. A bounded live Gemini evaluation records actual model/provider identifiers and outcomes separately from fixtures.
+- [x] Sanitized JSON, Markdown and standalone HTML reports, SHA-256 inventories and actual desktop/mobile screenshots are available.
+- [x] README, API, architecture, threat model, decisions, limitations, licences/notices, pinned dependencies and a prepared CI workflow match the implementation.
+- [x] Final clean local verification/rehearsal passes and the local source history/release state matches the reported evidence.
 
 Today's scope is a local reference. Public GitHub/portfolio publication, arbitrary document formats, enterprise SSO, external actions and distributed/multi-writer deployment are follow-ups.
 

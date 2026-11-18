@@ -1,10 +1,10 @@
 {
   "kind": "actual-local-embedding-retrieval",
   "status": "PASS",
-  "generatedAt": "2026-11-18T13:03:04.017374+00:00",
+  "generatedAt": "2026-11-18T13:07:50.579495+00:00",
   "providerGenerationRequests": 0,
-  "sourceRevision": "52c19443584572c217299b9aed71f1146d5618fa",
-  "workingTreeDirty": true,
+  "sourceRevision": "c07965c41f17b0ae30f7b19395b8d36d317e6f15",
+  "workingTreeDirty": false,
   "corpusSha256": "4e52bffcfff2f9cd945f9c05b5d7bb5444212e8f26b47bdf17aff543224a9af8",
   "evaluationScriptSha256": "9c397a8ea52866c6d4fc8448c1f5045a64e3d8163e3a5794d4c7d70d2a6fcfd6",
   "retrievalCodeSha256": "b43b872ed34f076cbdbeeb4609988c929f2f2261db3e7d657d43f2b583cdd3e0",

@@ -10,24 +10,26 @@ The embedding snapshot is pinned to `aa8f8b060edb00e03bfdd08813a2949946c8ba55`. 
 
 ## Checks and evidence
 
-This table is finalized after the last release verification; pending entries are not a claim of completion.
+Final observed acceptance results are below. Fixture, local-vector, live-model and browser evidence remain distinct.
 
-| Check                                          | Observed result                                                                       |
-| ---------------------------------------------- | ------------------------------------------------------------------------------------- |
-| Strict production and verification types       | Passed during implementation; final run pending                                       |
-| TypeScript unit/adversarial/report tests       | Final run pending                                                                     |
-| Python real-DuckDB/policy/HTTP/bootstrap tests | 55 passed before final freeze; final run pending                                      |
-| Real local-embedding retrieval                 | 5/5 known-answer top-1 hits, plus 1 scope control; final-source rerun pending         |
-| Deterministic security rehearsal               | 15/15 cases passed; final-source rerun pending                                        |
-| Offline actual browser journeys                | 5 passed, including delayed-workspace-response regression; final-source rerun pending |
-| Frozen live Gemini evaluation                  | 5/5 passed on the recorded pre-release working tree; see live report hashes           |
-| Live actual browser answer/source              | Passed; final-source smoke pending                                                    |
-| Secret and evidence-hash checks                | Final staged-file and bundle scan pending                                             |
-| npm production dependency audit                | One upstream advisory, attributed to 2 packages; not a clean audit. See SECURITY.md   |
-| Python dependency consistency                  | `pip check` passed                                                                    |
-| Remote CI                                      | Prepared only; not run remotely                                                       |
+| Check                                             | Observed result                                                                                     |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Single-command setup/build/start                  | npm run demo passed on the verified host; cache and credentials reused without reset                |
+| Complete offline acceptance                       | npm run validate:demo passed, including restart and fresh reports                                   |
+| Strict production and verification types          | Passed                                                                                              |
+| TypeScript unit/adversarial/report tests          | 47 passed                                                                                           |
+| Python real-DuckDB/policy/HTTP/bootstrap tests    | 58 passed; one recorded upstream TestClient deprecation warning                                     |
+| Real local-embedding retrieval                    | 5/5 known-answer top-1 hits plus 1 scope control passed; committed-source rerun passed              |
+| Deterministic security rehearsal                  | 15/15 cases passed; committed-source rerun passed                                                   |
+| Offline actual browser journeys                   | 6 passed; the explicitly gated paid test was skipped                                                |
+| Frozen live Gemini evaluation                     | 5/5 passed on its recorded pre-release working tree                                                 |
+| Final committed-source live browser answer/source | Passed; one actual generation, authorized citation opened, immutable capture retained               |
+| Secret comparison and evidence hashes             | Passed: 7 available private secrets compared; 16 manifest entries and 5 public screenshots verified |
+| npm production dependency audit                   | One upstream advisory attributed to 2 packages; remaining finding disclosed in SECURITY.md          |
+| Python dependency consistency                     | pip check passed                                                                                    |
+| Remote CI                                         | Prepared only; not run remotely                                                                     |
 
-The live suite used one generation request per case. One earlier provider smoke and one browser smoke also succeeded: 7/12 total attempts before final hardening. The final number is recorded below after the last explicitly counted browser check. No allowance reset was performed.
+The five-question live suite used one generation per case. Together with the initial provider smoke and two browser smokes, total observed delivery usage is **8/12 generation HTTP attempts**. Four remain in the configured local allowance. No allowance reset was performed.
 
 ## Issues found and corrected
 
@@ -57,4 +59,8 @@ The prepared CI workflow has not run on GitHub. The native Windows path, package
 
 ## Final local release
 
-Pending final verification, reviewed source integration into local `main`, local `v0.1.0` tag, evidence export/hash verification and final actual-secret scan. No goal completion is claimed until these entries are finalized.
+Accepted local reference: **v0.1.0**, local **main** branch and annotated **v0.1.0** tag. Public GitHub/portfolio publication remains a follow-up.
+
+The final committed-source security, retrieval and live-browser runs identify snapshot **c07965c41f17b0ae30f7b19395b8d36d317e6f15**, with a clean working tree at each run. The production/verification source-tree SHA-256 is **b9bee3876df7413a0dba58501f88f3596e9570f18fc0b95ac25e355f9b7583eb**. Final release documentation/evidence commits retain that same source tree; they do not relabel the earlier five-question paid evaluation.
+
+The complete offline acceptance, subsequent committed-source runs, final real-browser capture, actual-private-secret comparison, exported report hashes and staged-file review passed. The local app is left running at **http://127.0.0.1:4280** in live mode. Generated demo passwords remain in ignored **.local/private/demo-accounts.json**.

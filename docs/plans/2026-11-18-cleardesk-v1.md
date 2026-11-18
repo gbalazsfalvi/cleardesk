@@ -118,9 +118,9 @@ Files: scripts/cleardesk.mjs and platform wrappers, .github/workflows/verify.yml
 - [x] Prepare check-only CI with pinned actions and no mandatory paid provider secret. Do not call prepared CI a remotely observed successful run.
 - [x] Perform a focused self-review of all trust boundaries, SQL predicates, revision/dependency handling, budgets, output rendering and report admission. Resolve material findings with failing-then-passing regressions.
 - [x] Run the full clean local verification, fresh rehearsal and actual browser checks. Broaden/repeat only for a new fix or unresolved concern.
-- [ ] Write a five-minute reviewer walkthrough, actual commands/results, screenshots and explicit limitations. Scan intended source/bundles/evidence for the exact private credential without printing it. Inspect the Git file list and authentic history.
-- [ ] Integrate the verified local feature into main, create a local v0.1.0 tag and record evidence/source identity. Public GitHub/portfolio publication remains a follow-up.
-- [ ] Mark the goal complete only after the definition of done passes; otherwise report a real remaining provider/environment blocker accurately.
+- [x] Write a five-minute reviewer walkthrough, actual commands/results, screenshots and explicit limitations. Scan intended source/bundles/evidence for the exact private credential without printing it. Inspect the Git file list and authentic history.
+- [x] Integrate the verified local feature into main, create a local v0.1.0 tag and record evidence/source identity. Public GitHub/portfolio publication remains a follow-up.
+- [x] Mark the goal complete only after the definition of done passes; otherwise report a real remaining provider/environment blocker accurately.
 
 ## Self-review of this plan
 
