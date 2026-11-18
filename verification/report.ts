@@ -3,6 +3,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { SOURCE_HASH_METHOD, sourceFingerprint } from './source-identity.js';
 
 /** Fixed assertions prevent a case with no observations from becoming a green result. */
 export const CASES = [
@@ -117,6 +118,7 @@ export const provenanceSchema = z
   .object({
     sourceRevision: z.string().regex(/^[a-f0-9]{40}$/),
     sourceTreeSha256: hash,
+    sourceTreeHashMethod: z.literal(SOURCE_HASH_METHOD).optional(),
     workingTreeDirty: z.boolean(),
     corpusSha256: hash,
     embeddingManifestSha256: hash,
@@ -227,12 +229,9 @@ export function provenance(root: string) {
         /^(apps|packages|services|scripts|verification)\//.test(name) ||
         /^[^/]+\.(json|ts)$/.test(name),
     );
-  const tree = createHash('sha256');
-  for (const name of [...new Set(files)].sort()) {
-    tree.update(name.replaceAll('\\', '/') + '\0');
-    tree.update(readFileSync(join(root, name)));
-    tree.update('\0');
-  }
+  const sourceTreeSha256 = sourceFingerprint(
+    [...new Set(files)].map((name) => ({ path: name, bytes: readFileSync(join(root, name)) })),
+  );
   const sha = (relative: string) =>
     createHash('sha256')
       .update(readFileSync(join(root, relative)))
@@ -242,7 +241,8 @@ export function provenance(root: string) {
       cwd: root,
       encoding: 'utf8',
     }).trim(),
-    sourceTreeSha256: tree.digest('hex'),
+    sourceTreeSha256,
+    sourceTreeHashMethod: SOURCE_HASH_METHOD,
     workingTreeDirty:
       execFileSync('git', ['status', '--porcelain'], { cwd: root, encoding: 'utf8' }).trim()
         .length > 0,

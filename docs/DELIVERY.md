@@ -44,6 +44,7 @@ The five-question live suite used one generation per case. Together with the ini
 - Human document changes and terminal failure/cancellation outcomes now create safe allowlisted activity events. An in-flight discarded answer is also checked directly in DuckDB to contain no saved answer/citations.
 - The Windows lifecycle check found a short gap between process exit and socket release. Shutdown now waits for its ports to drain; startup also verifies the instance marker rather than accepting an unrelated health response.
 - Actual evidence export detected Windows newline translation in the Python-generated hash inventory. Reports now write canonical UTF-8 bytes; exported inventories and screenshot hashes are verified from actual bytes.
+- The final Git checkout check exposed raw source fingerprints changing with Windows line endings. Source identity now declares `utf8-lf-v1`, normalizing only declared UTF-8 text; binary bytes and exact evidence inventories remain unchanged. Dedicated regressions cover newline equivalence, meaningful changes, binary preservation and invalid encoding.
 
 ## Dependency finding
 

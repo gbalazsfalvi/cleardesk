@@ -59,6 +59,8 @@ Committed migration bytes are checksum-checked. Add a migration rather than edit
 
 Fixture, actual local-vector, live Gemini and browser observations answer different questions. Reports retain source identity/working-tree state. A report from an earlier implementation stage is not labelled as a final-source rerun.
 
+New reports declare source hash method `utf8-lf-v1`: declared UTF-8 source text is hashed with LF line endings, so Git's Windows checkout conversion does not change its identity. Paths and binary bytes remain significant. Older reports without this field used raw source bytes and retain their original observations. Report and screenshot SHA-256 inventories always verify exact artifact bytes; source newline normalization does not apply to those inventories.
+
 ## Production is separate work
 
 Before internet exposure, review identity/SSO, HTTPS/Secure cookies and trusted origins, external-inference data policy, monitoring, dependency findings, backups/retention, multi-instance admission and a supported data deployment. These features are outside this local reference release. See [LIMITATIONS.md](LIMITATIONS.md) and [SECURITY.md](../SECURITY.md).
