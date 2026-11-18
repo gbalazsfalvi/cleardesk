@@ -3,11 +3,11 @@
   "product": "ClearDesk",
   "edition": "0.1.0",
   "kind": "deterministic-fixture",
-  "generatedAt": "2026-11-18T11:58:02.950Z",
+  "generatedAt": "2026-11-18T13:03:19.304Z",
   "status": "PASS",
   "provenance": {
     "sourceRevision": "52c19443584572c217299b9aed71f1146d5618fa",
-    "sourceTreeSha256": "1f6c73b4202ab7025258dfd608d67e33d0bddb22a005bd036ea20bab1f4a18f7",
+    "sourceTreeSha256": "b9bee3876df7413a0dba58501f88f3596e9570f18fc0b95ac25e355f9b7583eb",
     "workingTreeDirty": true,
     "corpusSha256": "4e52bffcfff2f9cd945f9c05b5d7bb5444212e8f26b47bdf17aff543224a9af8",
     "embeddingManifestSha256": "7abeb180b9c205b60f1094e7deba05e39e36a92b7a7356c6fd4b412552757cb7",

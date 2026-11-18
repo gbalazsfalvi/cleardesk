@@ -1,6 +1,6 @@
 # ClearDesk local retrieval evaluation
 
-PASS · 2026-11-18T12:47:27.218107+00:00
+PASS · 2026-11-18T13:03:04.017374+00:00
 
 | Case | Kind | Result | Top source |
 |---|---|---|---|

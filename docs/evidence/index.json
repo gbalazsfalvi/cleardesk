@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
-  "exportedAt": "2026-11-18T12:47:28.405Z",
+  "exportedAt": "2026-11-18T13:07:29.745Z",
   "artifacts": [
     {
       "directory": "security",
       "kind": "deterministic-fixture",
-      "sourceRun": "artifacts/runs/security/2026-11-18T11-58-02-950Z-5a17b4a1",
-      "generatedAt": "2026-11-18T11:58:02.950Z",
+      "sourceRun": "artifacts/runs/security/2026-11-18T13-03-19-304Z-473f4da5",
+      "generatedAt": "2026-11-18T13:03:19.304Z",
       "status": "PASS",
-      "reportSha256": "1053134d7a5e29edafceb78300c9c25d163f6e329a7feee3e4c721bc6b4ecda1"
+      "reportSha256": "e49c9e599b652f3238070d445d2ce147e6614ae7c5b55e4739d054a06188f0cd"
     },
     {
       "directory": "retrieval",
       "kind": "actual-local-embedding-retrieval",
-      "sourceRun": "artifacts/runs/retrieval/2026-11-18T12-47-27.218107+00-00-48a68cb6",
-      "generatedAt": "2026-11-18T12:47:27.218107+00:00",
+      "sourceRun": "artifacts/runs/retrieval/2026-11-18T13-03-04.017374+00-00-835ef9bd",
+      "generatedAt": "2026-11-18T13:03:04.017374+00:00",
       "status": "PASS",
-      "reportSha256": "2510a45b774869d407f53fda175ebf8fed8a3762a445487d34559d252f9d14c8"
+      "reportSha256": "1451fff3113f1903900d639674eef31beb071a522807705b8f42feee926d9bc6"
     },
     {
       "directory": "live",
@@ -38,7 +38,7 @@
   "screenshots": [
     {
       "path": "docs/images/answer-and-source-fixture.png",
-      "sha256": "05fb1e17ec455d451cec25725100821a62d8390c1456cc7bdc50e701048bfe3c"
+      "sha256": "e6e67283ea20a49fc1a9ed65cfa22f238272b0835576fc27e031737596aff9ab"
     },
     {
       "path": "docs/images/knowledge-admin-fixture.png",
@@ -54,7 +54,7 @@
     },
     {
       "path": "docs/images/workspace-fixture.png",
-      "sha256": "0f98f673d3773505c275fbb5314487a950f36c0b36599a427c87498f25134d65"
+      "sha256": "fbdadc29e8f02c423f869b033ec467017de9bd1ba4a256548a3b85cd739ec885"
     }
   ]
 }
