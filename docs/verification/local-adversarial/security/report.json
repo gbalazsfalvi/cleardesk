@@ -1,0 +1,279 @@
+{
+  "schemaVersion": 1,
+  "product": "ClearDesk",
+  "edition": "0.1.0",
+  "kind": "deterministic-fixture",
+  "generatedAt": "2026-11-18T15:04:21.779Z",
+  "status": "PASS",
+  "provenance": {
+    "sourceRevision": "2790a9e4dd4532b1b341f1d3ccbd093c0dd8e162",
+    "sourceTreeSha256": "d8ed84e4a5a9b85d15497d7b4c41df0278df25e592f4e4f4ccac79db858b2122",
+    "sourceTreeHashMethod": "utf8-lf-v1",
+    "workingTreeDirty": true,
+    "corpusSha256": "4e52bffcfff2f9cd945f9c05b5d7bb5444212e8f26b47bdf17aff543224a9af8",
+    "embeddingManifestSha256": "7abeb180b9c205b60f1094e7deba05e39e36a92b7a7356c6fd4b412552757cb7",
+    "node": "24.14.0",
+    "python": "3.13.1",
+    "mastra": "1.84.0",
+    "googleAdapter": "4.0.122"
+  },
+  "prerequisites": {
+    "dataReady": true,
+    "syntheticCorpus": true,
+    "fixtureOnly": true,
+    "browserAvailable": true
+  },
+  "cases": [
+    {
+      "id": "E01",
+      "title": "Session and private-service boundary",
+      "checks": [
+        "private_credential_required",
+        "anonymous_denied",
+        "csrf_and_origin_checked",
+        "session_rotated_logout_invalid"
+      ],
+      "status": "PASS",
+      "assertions": {
+        "private_credential_required": true,
+        "anonymous_denied": true,
+        "csrf_and_origin_checked": true,
+        "session_rotated_logout_invalid": true
+      },
+      "errorCode": null
+    },
+    {
+      "id": "E02",
+      "title": "Retrieval before model context",
+      "checks": [
+        "selected_workspace_only",
+        "filter_before_model",
+        "dual_workspace_user_covered"
+      ],
+      "status": "PASS",
+      "assertions": {
+        "selected_workspace_only": true,
+        "filter_before_model": true,
+        "dual_workspace_user_covered": true
+      },
+      "errorCode": null
+    },
+    {
+      "id": "E03",
+      "title": "Direct source and chunk access",
+      "checks": [
+        "foreign_source_denied",
+        "foreign_chunk_denied",
+        "own_source_readable"
+      ],
+      "status": "PASS",
+      "assertions": {
+        "foreign_source_denied": true,
+        "foreign_chunk_denied": true,
+        "own_source_readable": true
+      },
+      "errorCode": null
+    },
+    {
+      "id": "E04",
+      "title": "Conversation ownership",
+      "checks": [
+        "foreign_owner_denied",
+        "foreign_workspace_thread_denied",
+        "own_thread_readable"
+      ],
+      "status": "PASS",
+      "assertions": {
+        "foreign_owner_denied": true,
+        "foreign_workspace_thread_denied": true,
+        "own_thread_readable": true
+      },
+      "errorCode": null
+    },
+    {
+      "id": "E05",
+      "title": "Dual-workspace conversation context",
+      "checks": [
+        "history_selected_workspace_only",
+        "context_selected_workspace_only"
+      ],
+      "status": "PASS",
+      "assertions": {
+        "history_selected_workspace_only": true,
+        "context_selected_workspace_only": true
+      },
+      "errorCode": null
+    },
+    {
+      "id": "E06",
+      "title": "People-team document permissions",
+      "checks": [
+        "member_hr_denied",
+        "hr_source_readable",
+        "hr_not_admin"
+      ],
+      "status": "PASS",
+      "assertions": {
+        "member_hr_denied": true,
+        "hr_source_readable": true,
+        "hr_not_admin": true
+      },
+      "errorCode": null
+    },
+    {
+      "id": "E07",
+      "title": "Forged authority arguments",
+      "checks": [
+        "forged_tool_authority_rejected",
+        "forged_public_role_rejected",
+        "scoped_tool_still_works"
+      ],
+      "status": "PASS",
+      "assertions": {
+        "forged_tool_authority_rejected": true,
+        "forged_public_role_rejected": true,
+        "scoped_tool_still_works": true
+      },
+      "errorCode": null
+    },
+    {
+      "id": "E08",
+      "title": "Prompt-injection authority containment",
+      "checks": [
+        "injection_does_not_grant_foreign_read",
+        "no_action_tool",
+        "foreign_content_absent_from_context"
+      ],
+      "status": "PASS",
+      "assertions": {
+        "injection_does_not_grant_foreign_read": true,
+        "no_action_tool": true,
+        "foreign_content_absent_from_context": true
+      },
+      "errorCode": null
+    },
+    {
+      "id": "E09",
+      "title": "Citation provenance gate",
+      "checks": [
+        "fabricated_citation_rejected",
+        "unverified_text_not_saved"
+      ],
+      "status": "PASS",
+      "assertions": {
+        "fabricated_citation_rejected": true,
+        "unverified_text_not_saved": true
+      },
+      "errorCode": null
+    },
+    {
+      "id": "E10",
+      "title": "In-flight permission change",
+      "checks": [
+        "revision_conflict_returned",
+        "answer_discarded",
+        "stale_text_not_saved"
+      ],
+      "status": "PASS",
+      "assertions": {
+        "revision_conflict_returned": true,
+        "answer_discarded": true,
+        "stale_text_not_saved": true
+      },
+      "errorCode": null
+    },
+    {
+      "id": "E11",
+      "title": "Uncited context revocation",
+      "checks": [
+        "uncited_dependency_revoked",
+        "history_redacted",
+        "subsequent_context_clean"
+      ],
+      "status": "PASS",
+      "assertions": {
+        "uncited_dependency_revoked": true,
+        "history_redacted": true,
+        "subsequent_context_clean": true
+      },
+      "errorCode": null
+    },
+    {
+      "id": "E12",
+      "title": "Adversarial text in the production renderer",
+      "checks": [
+        "no_executable_html",
+        "no_external_image_request",
+        "no_arbitrary_link",
+        "useful_markdown_preserved"
+      ],
+      "status": "PASS",
+      "assertions": {
+        "no_executable_html": true,
+        "no_external_image_request": true,
+        "no_arbitrary_link": true,
+        "useful_markdown_preserved": true
+      },
+      "errorCode": null
+    },
+    {
+      "id": "E13",
+      "title": "Durable budget and bounded admission",
+      "checks": [
+        "failed_attempts_stay_spent",
+        "restart_preserves_cap",
+        "excess_dispatch_refused",
+        "actor_and_global_caps"
+      ],
+      "status": "PASS",
+      "assertions": {
+        "failed_attempts_stay_spent": true,
+        "restart_preserves_cap": true,
+        "excess_dispatch_refused": true,
+        "actor_and_global_caps": true
+      },
+      "errorCode": null
+    },
+    {
+      "id": "E14",
+      "title": "Inputs, literal SQL values and persistence",
+      "checks": [
+        "sql_title_is_literal",
+        "ingest_bounds_checked",
+        "source_hash_matches",
+        "independent_session_reads_same_source"
+      ],
+      "status": "PASS",
+      "assertions": {
+        "sql_title_is_literal": true,
+        "ingest_bounds_checked": true,
+        "source_hash_matches": true,
+        "independent_session_reads_same_source": true
+      },
+      "errorCode": null
+    },
+    {
+      "id": "E15",
+      "title": "Unscoped retriever positive control",
+      "checks": [
+        "unsafe_canary_observed",
+        "hardened_canary_absent",
+        "fixture_label_explicit"
+      ],
+      "status": "PASS",
+      "assertions": {
+        "unsafe_canary_observed": true,
+        "hardened_canary_absent": true,
+        "fixture_label_explicit": true
+      },
+      "errorCode": null
+    }
+  ],
+  "limitations": [
+    "Deterministic scenarios use adversarial/recording model fixtures, not Gemini completions.",
+    "The API is exercised in-process through Hono and across actual HTTP to the private DuckDB service; browser renderer checks use Chromium.",
+    "The unsafe retriever is an isolated synthetic test control, never a product configuration.",
+    "A valid citation proves source provenance, not semantic correctness or universal prompt-injection resistance.",
+    "Provider content already dispatched under valid access cannot be recalled after revocation."
+  ]
+}

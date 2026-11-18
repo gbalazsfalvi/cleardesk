@@ -2,6 +2,8 @@
 
 All public endpoints are same-origin under /api. All mutation bodies use JSON except where explicitly documented. Unknown keys, invalid UUIDs and over-limit fields fail with400/413 before business effects. Timestamps are ISO8601 UTC.
 
+Chat-turn request bodies are limited to 16 KiB, including JSON syntax and padding, for both declared-length and chunked transfers. This tighter bound is enforced before authentication/private-service work. The general API/document request bound is 256 KiB; document text has its separate 64 KiB UTF-8 bound. Missing, blank or overlong CSRF headers are rejected at the public boundary with403 CSRF_REJECTED; present tokens still require private session verification.
+
 ## Session and errors
 
 GET /api/session returns { authenticated, csrfToken, actor, workspaces, modelMode }. Actor is null before login; otherwise { id, username, displayName }. Workspaces contain { id, name, role }. This endpoint may establish an anonymous HttpOnly session cookie.

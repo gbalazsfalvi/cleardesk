@@ -1,0 +1,200 @@
+{
+  "kind": "actual-loopback-http-adversarial",
+  "stage": "before",
+  "generatedAt": "2026-11-18T14:58:42.791Z",
+  "status": "FAIL",
+  "records": [
+    {
+      "id": "H01-anonymous-documents",
+      "expectedStatus": 401,
+      "observedStatus": 401,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H02-host-rebinding",
+      "expectedStatus": 403,
+      "observedStatus": 403,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H03-cross-origin-mutation",
+      "expectedStatus": 403,
+      "observedStatus": 403,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H04-missing-csrf",
+      "expectedStatus": 403,
+      "observedStatus": 400,
+      "status": "FAIL",
+      "errorCode": null
+    },
+    {
+      "id": "H05-other-session-csrf",
+      "expectedStatus": 403,
+      "observedStatus": 403,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H06-member-hr-denied",
+      "expectedStatus": 404,
+      "observedStatus": 404,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H07-member-foreign-source-denied",
+      "expectedStatus": 404,
+      "observedStatus": 404,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H08-foreign-workspace-denied",
+      "expectedStatus": 404,
+      "observedStatus": 404,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H09-dual-member-wrong-scope-denied",
+      "expectedStatus": 404,
+      "observedStatus": 404,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H10-dual-member-correct-scope-control",
+      "expectedStatus": 200,
+      "observedStatus": 200,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H11-forged-internal-identity-ignored",
+      "expectedStatus": 404,
+      "observedStatus": 404,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H12-member-cannot-change-acl",
+      "expectedStatus": 403,
+      "observedStatus": 403,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H13-mass-assigned-role-rejected",
+      "expectedStatus": 400,
+      "observedStatus": 400,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H14-upload-path-traversal-rejected",
+      "expectedStatus": 400,
+      "observedStatus": 400,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H15-malformed-json",
+      "expectedStatus": 400,
+      "observedStatus": 400,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H16-declared-chat-byte-limit",
+      "expectedStatus": 413,
+      "observedStatus": 413,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H17-chunked-chat-byte-limit",
+      "expectedStatus": 413,
+      "observedStatus": 404,
+      "status": "FAIL",
+      "errorCode": null
+    },
+    {
+      "id": "H18-chunked-global-byte-limit",
+      "expectedStatus": 413,
+      "observedStatus": 413,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H19-private-service-forged-credential",
+      "expectedStatus": 401,
+      "observedStatus": 401,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H20-encoded-static-traversal",
+      "expectedStatus": 404,
+      "observedStatus": 404,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H21-backslash-static-traversal",
+      "expectedStatus": 404,
+      "observedStatus": 404,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H22-sql-shaped-identifier-rejected",
+      "expectedStatus": 400,
+      "observedStatus": 400,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H23-no-get-mutation-route",
+      "expectedStatus": 404,
+      "observedStatus": 404,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H24-authorized-hr-control",
+      "expectedStatus": 200,
+      "observedStatus": 200,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H25-authorized-member-control",
+      "expectedStatus": 200,
+      "observedStatus": 200,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H26-error-security-headers",
+      "expectedStatus": 403,
+      "observedStatus": 403,
+      "status": "PASS",
+      "errorCode": null
+    }
+  ],
+  "requests": 35,
+  "sessionCleanupPassed": true,
+  "applicationGenerationDelta": 0,
+  "originalEvaluationLedgerUnchanged": true,
+  "errorCode": null,
+  "limitations": [
+    "Bounded local HTTP checks, not a full penetration test or load benchmark.",
+    "No model turn was created: byte-limit checks use a nonexistent conversation UUID.",
+    "Response bodies, cookies, passwords, CSRF values and service credentials are omitted."
+  ]
+}

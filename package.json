@@ -25,6 +25,7 @@
     "evidence:export": "node scripts/evidence.mjs export",
     "evidence:verify": "node scripts/evidence.mjs verify",
     "test:browser:live": "node scripts/cleardesk.mjs live-smoke",
+    "assess:http": "node --import tsx verification/http-assessment.mjs",
     "build": "npm run build --workspace @cleardesk/contracts && npm run build --workspace @cleardesk/api && npm run build --workspace @cleardesk/web",
     "typecheck": "tsc -p packages/contracts/tsconfig.json --noEmit && tsc -p apps/api/tsconfig.json --noEmit && tsc -p apps/web/tsconfig.json --noEmit && tsc -p verification/tsconfig.json --noEmit",
     "test": "vitest run",

@@ -9,6 +9,7 @@ import {
   conversationInput,
   documentInput,
   loginInput,
+  LIMITS,
   turnInput,
 } from '@cleardesk/contracts';
 import type { SessionView, TurnReply } from '@cleardesk/contracts';
@@ -83,10 +84,21 @@ export function createApp(options: Options) {
       throw new DataError('FORBIDDEN', 403);
     await next();
   });
+  // Count streamed chat bodies before authentication or private-service work. A
+  // Content-Length-only check misses ordinary chunked HTTP requests.
+  app.use(
+    '/api/workspaces/:workspace/conversations/:conversation/turns',
+    bodyLimit({
+      maxSize: LIMITS.chatRequestBytes,
+      onError: () => {
+        throw new DataError('BODY_TOO_LARGE', 413);
+      },
+    }),
+  );
   app.use(
     '/api/*',
     bodyLimit({
-      maxSize: 262144,
+      maxSize: LIMITS.documentRequestBytes,
       onError: () => {
         throw new DataError('BODY_TOO_LARGE', 413);
       },
@@ -96,12 +108,15 @@ export function createApp(options: Options) {
     const token = getCookie(c, cookie) ?? '';
     c.set('token', token);
     if (!['GET', 'HEAD'].includes(c.req.method)) {
+      const csrfToken = c.req.header('x-csrf-token') ?? '';
       if (
         !options.origins.includes(c.req.header('origin') ?? '') ||
-        !c.req.header('content-type')?.startsWith('application/json')
+        !c.req.header('content-type')?.startsWith('application/json') ||
+        !csrfToken.trim() ||
+        csrfToken.length > 128
       )
         throw new DataError('CSRF_REJECTED', 403);
-      await client.request('/v1/csrf', token, { csrfToken: c.req.header('x-csrf-token') ?? '' });
+      await client.request('/v1/csrf', token, { csrfToken });
     }
     if (c.req.path !== '/api/session' && c.req.path !== '/api/status') {
       const session = await client.request<SessionView>('/v1/session', token);
@@ -287,8 +302,6 @@ export function createApp(options: Options) {
   });
   const turnBase = base + '/conversations/:conversation/turns';
   app.post(turnBase, async (c) => {
-    if (Number(c.req.header('content-length') ?? 0) > 16384)
-      throw new DataError('BODY_TOO_LARGE', 413);
     const body = turnInput.parse(await c.req.json());
     const workspace = c.req.param('workspace');
     const conversation = uuid.parse(c.req.param('conversation'));

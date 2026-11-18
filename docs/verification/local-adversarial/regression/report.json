@@ -1,0 +1,33 @@
+{
+  "kind": "request-boundary-regression-observations",
+  "generatedAt": "2026-11-18T15:08:22.740Z",
+  "status": "PASS",
+  "source": {
+    "sourceRevision": "2790a9e4dd4532b1b341f1d3ccbd093c0dd8e162",
+    "sourceTreeSha256": "dc11dde7d50947390de16e76e9dc4f481936b4573381fb6ff6065c67f41304a0",
+    "sourceTreeHashMethod": "utf8-lf-v1",
+    "workingTreeDirty": true,
+    "corpusSha256": "4e52bffcfff2f9cd945f9c05b5d7bb5444212e8f26b47bdf17aff543224a9af8",
+    "embeddingManifestSha256": "7abeb180b9c205b60f1094e7deba05e39e36a92b7a7356c6fd4b412552757cb7",
+    "node": "24.14.0",
+    "python": "3.13.1",
+    "mastra": "1.84.0",
+    "googleAdapter": "4.0.122"
+  },
+  "observedInitialFailures": 5,
+  "observedInitialPasses": 2,
+  "observedCorrectedPasses": 7,
+  "completeTypescriptPasses": 63,
+  "pythonPasses": 59,
+  "pythonWarnings": 1,
+  "privateLogSha256": {
+    "red": "fad972e05cc99fde0f3a43fe388fc8c3f6799e4e07d15a592ef3246b0e3b67c1",
+    "green": "220e2de94c36c0d96b5e02dd08141697747d2db9bbeb02bfccb8c67a9f17dfd4",
+    "fullVerification": "1b6d4e445f52e133961cd19a5bfe372b9f784f4d9867a77b6f5fdb8244ba0318"
+  },
+  "limitations": [
+    "This record summarizes retained local execution logs; the private full logs are not exported.",
+    "The source snapshot is retained from the after-fix HTTP observation, not relabelled as a clean release.",
+    "Real HTTP framing in the seven regressions uses a synthetic private-service adapter; listening-instance and DuckDB observations are separate reports."
+  ]
+}
