@@ -1,0 +1,35 @@
+{
+  "name": "cleardesk",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/api",
+    "apps/web",
+    "packages/contracts"
+  ],
+  "engines": {
+    "node": ">=24.14.0 <25"
+  },
+  "scripts": {
+    "bootstrap": "node scripts/cleardesk.mjs bootstrap",
+    "up": "node scripts/cleardesk.mjs up",
+    "stop": "node scripts/cleardesk.mjs stop",
+    "verify": "node scripts/cleardesk.mjs verify",
+    "rehearse": "node scripts/cleardesk.mjs rehearse",
+    "build": "npm run build --workspace @cleardesk/contracts && npm run build --workspace @cleardesk/api && npm run build --workspace @cleardesk/web",
+    "typecheck": "tsc -p packages/contracts/tsconfig.json --noEmit && tsc -p apps/api/tsconfig.json --noEmit && tsc -p apps/web/tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:browser": "playwright test",
+    "format:check": "prettier --check apps packages scripts verification docs *.md *.json",
+    "format": "prettier --write apps packages scripts verification docs *.md *.json"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "@types/node": "26.6.6",
+    "vitest": "5.1.1",
+    "tsx": "4.23.15",
+    "prettier": "3.10.1",
+    "@playwright/test": "1.65.1"
+  }
+}

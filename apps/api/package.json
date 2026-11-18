@@ -1,0 +1,18 @@
+{
+  "name": "@cleardesk/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "@cleardesk/contracts": "0.1.0",
+    "@mastra/core": "1.84.0",
+    "@ai-sdk/google": "4.0.122",
+    "hono": "4.13.19",
+    "@hono/node-server": "2.1.9",
+    "zod": "4.6.7"
+  }
+}
