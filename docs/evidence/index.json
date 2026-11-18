@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "exportedAt": "2026-11-18T12:47:28.405Z",
+  "artifacts": [
+    {
+      "directory": "security",
+      "kind": "deterministic-fixture",
+      "sourceRun": "artifacts/runs/security/2026-11-18T11-58-02-950Z-5a17b4a1",
+      "generatedAt": "2026-11-18T11:58:02.950Z",
+      "status": "PASS",
+      "reportSha256": "1053134d7a5e29edafceb78300c9c25d163f6e329a7feee3e4c721bc6b4ecda1"
+    },
+    {
+      "directory": "retrieval",
+      "kind": "actual-local-embedding-retrieval",
+      "sourceRun": "artifacts/runs/retrieval/2026-11-18T12-47-27.218107+00-00-48a68cb6",
+      "generatedAt": "2026-11-18T12:47:27.218107+00:00",
+      "status": "PASS",
+      "reportSha256": "2510a45b774869d407f53fda175ebf8fed8a3762a445487d34559d252f9d14c8"
+    },
+    {
+      "directory": "live",
+      "kind": "live-gemini",
+      "sourceRun": "artifacts/runs/live/2026-11-18T12-02-16-212Z",
+      "generatedAt": "2026-11-18T12:02:16.212Z",
+      "status": "PASS",
+      "reportSha256": "743dd77a45d709fe207e76faad291694dae7308010000f4ccf18a856ddde0ffe"
+    },
+    {
+      "directory": "browser-live",
+      "kind": "live-gemini-browser",
+      "sourceRun": "artifacts/runs/browser-live/2026-11-18T12-06-18-396Z",
+      "generatedAt": "2026-11-18T12:06:18.396Z",
+      "status": "PASS",
+      "reportSha256": "2298d0193f27701483af0ed0b07109dd109dac6f7f3f6687b2b6929d8b958ef4"
+    }
+  ],
+  "screenshots": [
+    {
+      "path": "docs/images/answer-and-source-fixture.png",
+      "sha256": "05fb1e17ec455d451cec25725100821a62d8390c1456cc7bdc50e701048bfe3c"
+    },
+    {
+      "path": "docs/images/knowledge-admin-fixture.png",
+      "sha256": "b7aceaf70d30eac8b51d1aad87a0c6f6f0eefc5547b94c876ba0648fc0af6c23"
+    },
+    {
+      "path": "docs/images/live-answer-and-source.png",
+      "sha256": "f7421144c619cd1911686d4f7e2cde3071fc5ca3a17019dfd763ce3f6cfb80a3"
+    },
+    {
+      "path": "docs/images/mobile-workspace-fixture.png",
+      "sha256": "a02b2cce860d4ead0255a3f915b085465d0b8ec677042f2473dc269db2f9890d"
+    },
+    {
+      "path": "docs/images/workspace-fixture.png",
+      "sha256": "0f98f673d3773505c275fbb5314487a950f36c0b36599a427c87498f25134d65"
+    }
+  ]
+}

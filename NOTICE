@@ -1,0 +1,9 @@
+ClearDesk
+Copyright 2026 Gergő Balázsfalvi
+
+ClearDesk is an independent reference implementation using fictional organizations
+and synthetic documents. It contains no employer or customer source code.
+
+This project's original source is licensed under Apache License 2.0.
+Third-party packages, font files and model weights retain their own licenses.
+See docs/THIRD_PARTY.md and the bundled font/icon notices.

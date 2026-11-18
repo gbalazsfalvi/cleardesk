@@ -162,3 +162,20 @@ def test_chunking_is_bounded_and_preserves_overlaps():
     chunks = split_text("a" * 2100)
     assert [len(chunk) for chunk in chunks] == [1000, 1000, 400]
     assert chunks[0][-150:] == chunks[1][:150]
+
+
+def test_document_mutations_leave_safe_metadata_events(library):
+    store, _, tokens, north, _ = library
+    document = ingest(store, tokens["admin"], north, "Audit source", "DO-NOT-LOG-THIS-CONTENT")
+    store.set_acl(tokens["admin"], north, document["id"], "HR")
+    store.delete(tokens["admin"], north, document["id"])
+    rows = store.db.connection.execute(
+        "SELECT code,resource_id FROM activity WHERE workspace_id=? ORDER BY created_at", [north]
+    ).fetchall()
+    assert [row[0] for row in rows] == [
+        "DOCUMENT_INGESTED",
+        "DOCUMENT_ACL_CHANGED",
+        "DOCUMENT_DELETED",
+    ]
+    assert all(row[1] == document["id"] for row in rows)
+    assert "DO-NOT-LOG" not in str(rows)

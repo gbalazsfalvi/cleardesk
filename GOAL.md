@@ -2,7 +2,7 @@
 
 **Target:** 18 November 2026, 23:59 Europe/Budapest (22:59 UTC).
 **Deliverable:** a complete local, GitHub-ready internal knowledge assistant with a polished English interface and inspectable security evidence.
-**Current status:** planning and provider-authentication preflight; application functionality is not yet claimed.
+**Current status:** implementation and security/model evaluations are in place; final acceptance and local release integration are in progress.
 
 The deadline is a target. Completion is determined by actual acceptance checks, never by weakening controls or inventing results.
 
@@ -25,14 +25,14 @@ Today's scope is a local reference. Public GitHub/portfolio publication, arbitra
 
 ## Allocation targets
 
-| Local time, Europe/Budapest | Deliverable |
-| --- | --- |
-| 11:45–12:30 | Design/contracts, locked foundation and provider integration preflight |
-| 12:30–14:30 | Identity, DuckDB store, scope/ACL policy and permission-aware history |
-| 14:30–16:00 | Ingestion, local embeddings, retrieval and Mastra/Gemini answer flow |
-| 16:00–18:00 | Responsive chat, sources, workspace and admin interface |
-| 18:00–20:00 | Adversarial cases, live evaluations and evidence reports |
-| 20:00–22:00 | Integrated browser/restart checks, documentation and local release |
-| 22:00–23:59 | Integration/debugging buffer |
+| Local time, Europe/Budapest | Deliverable                                                            |
+| --------------------------- | ---------------------------------------------------------------------- |
+| 11:45–12:30                 | Design/contracts, locked foundation and provider integration preflight |
+| 12:30–14:30                 | Identity, DuckDB store, scope/ACL policy and permission-aware history  |
+| 14:30–16:00                 | Ingestion, local embeddings, retrieval and Mastra/Gemini answer flow   |
+| 16:00–18:00                 | Responsive chat, sources, workspace and admin interface                |
+| 18:00–20:00                 | Adversarial cases, live evaluations and evidence reports               |
+| 20:00–22:00                 | Integrated browser/restart checks, documentation and local release     |
+| 22:00–23:59                 | Integration/debugging buffer                                           |
 
 These windows are plans, not recorded completion times.

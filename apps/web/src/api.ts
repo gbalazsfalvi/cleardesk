@@ -31,7 +31,20 @@ export async function request<T>(
     redirect: 'error',
   });
   if (!response.ok) {
-    const problem = (await response.json().catch(() => ({}))) as Partial<ApiProblem>;
+    const value: unknown = await response.json().catch(() => ({}));
+    if (
+      response.status === 409 &&
+      typeof value === 'object' &&
+      value !== null &&
+      'status' in value &&
+      value.status === 'ACCESS_CHANGED'
+    )
+      throw new ApiError(
+        'ACCESS_CHANGED',
+        'Knowledge access changed during this request. Please ask again.',
+        409,
+      );
+    const problem = value as Partial<ApiProblem>;
     throw new ApiError(
       problem.code ?? 'UNAVAILABLE',
       problem.detail ?? 'The request could not be completed.',

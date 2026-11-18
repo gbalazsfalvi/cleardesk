@@ -36,6 +36,7 @@ const childEnvironment = () => {
   return {
     ...env,
     PYTHONUTF8: '1',
+    PYTHONPATH: join(root, 'services/knowledge'),
     PYTHONUNBUFFERED: '1',
     HF_HUB_DISABLE_IMPLICIT_TOKEN: '1',
     HF_HUB_DISABLE_TELEMETRY: '1',
@@ -44,21 +45,21 @@ const childEnvironment = () => {
 mkdirSync(join(root, '.local/private'), { recursive: true });
 mkdirSync(join(root, '.local/delivery'), { recursive: true });
 
-function run(executable, args, cwd = root) {
+function run(executable, args, cwd = root, extraEnvironment = {}) {
   const result = spawnSync(executable, args, {
     cwd,
-    env: childEnvironment(),
+    env: { ...childEnvironment(), ...extraEnvironment },
     stdio: 'inherit',
     windowsHide: true,
   });
   if (result.error || result.status !== 0)
     throw new Error('Command failed: ' + executable + ' ' + args.join(' '));
 }
-function npm(args) {
+function npm(args, extraEnvironment = {}) {
   const cli = process.env.npm_execpath;
-  if (cli && existsSync(cli)) run(process.execPath, [cli, ...args]);
-  else if (win) run('cmd.exe', ['/d', '/s', '/c', 'npm ' + args.join(' ')]);
-  else run('npm', args);
+  if (cli && existsSync(cli)) run(process.execPath, [cli, ...args], root, extraEnvironment);
+  else if (win) run('cmd.exe', ['/d', '/s', '/c', 'npm ' + args.join(' ')], root, extraEnvironment);
+  else run('npm', args, root, extraEnvironment);
 }
 function runtime() {
   if (!existsSync(runtimePath))
@@ -125,6 +126,14 @@ async function stop() {
     await pause(250);
   if (record.processes.some((item) => alive(item.pid)))
     throw new Error('An owned process has not stopped yet.');
+  // Windows can release the process handle before its listening socket disappears.
+  // Wait for our two ports to drain; never kill a replacement/unrecognized process.
+  for (let count = 0; count < 40; count++) {
+    if (!(await portBusy(4280)) && !(await portBusy(4281))) break;
+    await pause(100);
+  }
+  if ((await portBusy(4280)) || (await portBusy(4281)))
+    throw new Error('Ports remain occupied after shutdown. No unrecognized process was modified.');
   writeFileSync(processPath, JSON.stringify({ root, processes: [] }, null, 2) + '\n');
   console.log('Stopped the recorded ClearDesk processes.');
 }
@@ -137,7 +146,7 @@ const portBusy = (port) =>
     });
     socket.once('error', () => done(false));
   });
-async function up() {
+async function up(build = true) {
   const config = runtime();
   if (existsSync(processPath)) {
     const record = JSON.parse(readFileSync(processPath, 'utf8'));
@@ -145,7 +154,7 @@ async function up() {
     if (living.length) {
       if (living.length === 2 && living.every(owned)) {
         const response = await fetch('http://127.0.0.1:4280/api/status').catch(() => null);
-        if (response?.ok) {
+        if (response?.ok && response.headers.get('x-cleardesk-instance') === config.instanceId) {
           console.log('ClearDesk is already running at http://127.0.0.1:4280');
           return;
         }
@@ -157,7 +166,12 @@ async function up() {
     throw new Error('A required port is occupied. No existing process was modified.');
   if (!existsSync(python) || !existsSync(join(root, '.local/private/demo-accounts.json')))
     throw new Error('Run npm run bootstrap first.');
-  npm(['run', 'build']);
+  const demoState = JSON.parse(
+    readFileSync(join(root, '.local/private/demo-accounts.json'), 'utf8'),
+  );
+  if (demoState.phase && demoState.phase !== 'COMPLETE')
+    throw new Error('Demo initialization is incomplete. Run npm run bootstrap to resume it.');
+  if (build) npm(['run', 'build']);
   const record = { root, instanceId: config.instanceId, processes: [] };
   for (const item of [
     {
@@ -203,7 +217,7 @@ async function up() {
     const response = await fetch('http://127.0.0.1:4280/api/status', {
       signal: AbortSignal.timeout(1000),
     }).catch(() => null);
-    if (response?.ok) {
+    if (response?.ok && response.headers.get('x-cleardesk-instance') === config.instanceId) {
       console.log('ClearDesk is ready at http://127.0.0.1:4280 (' + config.mode + ' mode).');
       return;
     }
@@ -214,30 +228,61 @@ async function up() {
   throw new Error('ClearDesk did not become ready. Review the private service logs.');
 }
 
+function bootstrap() {
+  if (
+    existsSync(processPath) &&
+    JSON.parse(readFileSync(processPath, 'utf8')).processes.some((item) => alive(item.pid))
+  )
+    throw new Error('ClearDesk is running. Run npm run stop before bootstrapping.');
+  runtime();
+  if (!existsSync(python)) run('python', ['-m', 'venv', join(root, 'services/knowledge/.venv')]);
+  npm(['ci', '--ignore-scripts', '--include=dev']);
+  run(python, [
+    '-m',
+    'pip',
+    'install',
+    '--require-hashes',
+    '--only-binary=:all:',
+    '-r',
+    'services/knowledge/requirements.lock',
+  ]);
+  run(python, ['scripts/prepare_embeddings.py']);
+  run(python, ['scripts/seed_demo.py']);
+  npm(['run', 'build']);
+  console.log(
+    'Bootstrap complete. Generated demo passwords are in .local/private/demo-accounts.json.',
+  );
+}
+
 try {
   const command = process.argv[2];
-  if (command === 'bootstrap') {
-    runtime();
-    if (!existsSync(python)) run('python', ['-m', 'venv', join(root, 'services/knowledge/.venv')]);
-    npm(['ci', '--ignore-scripts', '--include=dev']);
-    run(python, [
-      '-m',
-      'pip',
-      'install',
-      '--require-hashes',
-      '--only-binary=:all:',
-      '-r',
-      'services/knowledge/requirements.lock',
-    ]);
-    run(python, ['scripts/prepare_embeddings.py']);
-    run(python, ['scripts/seed_demo.py']);
-    npm(['run', 'build']);
+  if (command === 'bootstrap') bootstrap();
+  else if (command === 'demo') {
+    const running =
+      existsSync(processPath) &&
+      JSON.parse(readFileSync(processPath, 'utf8')).processes.some((item) => alive(item.pid));
+    if (running) await up();
+    else {
+      bootstrap();
+      await up(false);
+    }
+  } else if (command === 'validate') {
+    run(process.execPath, ['scripts/cleardesk.mjs', 'verify']);
+    await stop();
+    writeFileSync(runtimePath, JSON.stringify({ ...runtime(), mode: 'fixture' }, null, 2) + '\n', {
+      mode: 0o600,
+    });
+    await up(false);
+    run(python, ['verification/retrieval_eval.py']);
+    run(process.execPath, ['--import', 'tsx', 'verification/rehearse.ts']);
+    npm(['run', 'test:browser']);
     console.log(
-      'Bootstrap complete. Generated demo passwords are in .local/private/demo-accounts.json.',
+      'Local acceptance completed in fixture mode; fresh reports are under artifacts/runs.',
     );
   } else if (command === 'up') await up();
   else if (command === 'stop') await stop();
   else if (command === 'verify') {
+    npm(['run', 'format:check']);
     npm(['run', 'typecheck']);
     npm(['test']);
     run(python, [
@@ -247,13 +292,38 @@ try {
       'services/knowledge/cleardesk',
       'services/knowledge/tests',
       'scripts',
+      'verification',
+    ]);
+    run(python, [
+      '-m',
+      'ruff',
+      'format',
+      '--check',
+      'services/knowledge/cleardesk',
+      'services/knowledge/tests',
+      'scripts',
+      'verification',
     ]);
     run(python, ['-m', 'pytest', '-q'], join(root, 'services/knowledge'));
     npm(['run', 'build']);
     run(process.execPath, ['scripts/scan-secrets.mjs']);
+  } else if (command === 'mode' || command === 'live-smoke') {
+    const mode = command === 'live-smoke' ? 'live' : process.argv[3];
+    if (!['fixture', 'live'].includes(mode)) throw new Error('Choose fixture or live mode.');
+    await stop();
+    const configuration = runtime();
+    writeFileSync(runtimePath, JSON.stringify({ ...configuration, mode }, null, 2) + '\n', {
+      mode: 0o600,
+    });
+    await up();
+    if (command === 'live-smoke')
+      npm(['run', 'test:browser', '--', '--grep', 'bounded-live-browser'], {
+        CLEARDESK_LIVE_BROWSER: '1',
+      });
   } else if (command === 'rehearse')
     run(process.execPath, ['--import', 'tsx', 'verification/rehearse.ts']);
-  else throw new Error('Use bootstrap, up, stop, verify or rehearse.');
+  else if (command === 'retrieval') run(python, ['verification/retrieval_eval.py']);
+  else throw new Error('Use bootstrap, up, stop, verify, rehearse, mode or live-smoke.');
 } catch (error) {
   console.error(error instanceof Error ? error.message : 'ClearDesk command failed.');
   process.exitCode = 1;

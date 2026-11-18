@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { ProviderBudget, createBudgetedFetch } from '../src/ai/provider-budget.js';
+import { removeOwnedTemporaryDirectory } from '../../../verification/owned-temporary.js';
 
 const directories: string[] = [];
 function ledger() {
@@ -10,7 +11,7 @@ function ledger() {
   directories.push(directory);
   return join(directory, 'calls.json');
 }
-afterEach(() => directories.splice(0).forEach((path) => rmSync(path, { recursive: true })));
+afterEach(() => directories.splice(0).forEach(removeOwnedTemporaryDirectory));
 const endpoint =
   'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash-lite:generateContent';
 const body = JSON.stringify({
@@ -19,6 +20,43 @@ const body = JSON.stringify({
 });
 
 describe('persistent generation admission', () => {
+  it('rejects an unexpected tool surface before spending a generation request', async () => {
+    const path = ledger();
+    const upstream = vi.fn().mockResolvedValue(new Response('{}'));
+    const guarded = createBudgetedFetch(new ProviderBudget(path, 12), upstream);
+    const unsafe = {
+      ...JSON.parse(body),
+      tools: [{ functionDeclarations: [{ name: 'readFile', parameters: {} }] }],
+    };
+    await expect(
+      guarded(endpoint, { method: 'POST', body: JSON.stringify(unsafe) }),
+    ).rejects.toThrow('PROVIDER_REQUEST_REJECTED');
+    expect(upstream).not.toHaveBeenCalled();
+    expect(new ProviderBudget(path, 12).snapshot().spent).toBe(0);
+  });
+
+  it('rejects unknown or authority-forging model tool calls before Mastra can dispatch them', async () => {
+    for (const functionCall of [
+      { name: 'readFile', args: { path: '+(*a)' } },
+      { name: 'searchKnowledge', args: { query: 'policy', role: 'ADMIN' } },
+    ]) {
+      const path = ledger();
+      const upstream = vi
+        .fn()
+        .mockResolvedValue(
+          new Response(
+            JSON.stringify({ candidates: [{ content: { parts: [{ functionCall }] } }] }),
+          ),
+        );
+      await expect(
+        createBudgetedFetch(new ProviderBudget(path, 12), upstream)(endpoint, {
+          method: 'POST',
+          body,
+        }),
+      ).rejects.toThrow('UNVERIFIED_RESPONSE');
+      expect(new ProviderBudget(path, 12).snapshot().spent).toBe(1);
+    }
+  });
   it('counts retries and survives reconstruction without refunding a failed request', async () => {
     const path = ledger();
     const upstream = vi.fn().mockRejectedValue(new Error('transport failed'));

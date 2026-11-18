@@ -1,0 +1,26 @@
+{
+  "kind": "live-gemini-browser",
+  "status": "PASS",
+  "generatedAt": "2026-11-18T12:06:18.396Z",
+  "model": {
+    "mode": "live",
+    "id": "gemini-3.5-flash-lite",
+    "version": "gemini-3.5-flash-lite"
+  },
+  "generationRequests": 1,
+  "budgetSpent": 7,
+  "limit": 12,
+  "usage": {
+    "calls": 1,
+    "inputTokens": 1506,
+    "outputTokens": 128
+  },
+  "checks": {
+    "expectedAnswer": true,
+    "sourceOpenedWithCurrentAccess": true,
+    "liveModeVisible": true,
+    "noExternalBrowserRequests": true
+  },
+  "screenshot": "docs/images/live-answer-and-source.png",
+  "screenshotSha256": "f7421144c619cd1911686d4f7e2cde3071fc5ca3a17019dfd763ce3f6cfb80a3"
+}

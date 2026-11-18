@@ -23,6 +23,7 @@ interface Options {
   runner: ModelRunner;
   mode: 'fixture' | 'live';
   providerConfigured: boolean;
+  instanceId?: string;
   origins: string[];
   peer?: (context: Context) => string;
 }
@@ -66,6 +67,7 @@ export function createApp(options: Options) {
   };
 
   app.use('*', async (c, next) => {
+    if (options.instanceId) c.header('X-ClearDesk-Instance', options.instanceId);
     c.set('requestId', randomUUID());
     c.header('X-Content-Type-Options', 'nosniff');
     c.header('Referrer-Policy', 'no-referrer');
@@ -112,19 +114,21 @@ export function createApp(options: Options) {
   app.onError((error, c) => {
     let code =
       error instanceof ZodError || error instanceof SyntaxError ? 'INVALID_INPUT' : error.message;
-    if (!(code in safeDetails)) code = 'PROVIDER_UNAVAILABLE';
+    if (!Object.hasOwn(safeDetails, code)) code = 'PROVIDER_UNAVAILABLE';
     const status =
       error instanceof DataError
         ? error.status
         : code === 'INVALID_INPUT'
           ? 400
-          : code === 'BUSY'
-            ? 429
-            : code.startsWith('BUDGET_')
-              ? 503
-              : code === 'UNVERIFIED_RESPONSE'
-                ? 502
-                : 503;
+          : code === 'ACCESS_CHANGED'
+            ? 409
+            : code === 'BUSY'
+              ? 429
+              : code.startsWith('BUDGET_')
+                ? 503
+                : code === 'UNVERIFIED_RESPONSE'
+                  ? 502
+                  : 503;
     if (status === 429) c.header('Retry-After', '60');
     return c.json(
       {
@@ -316,6 +320,9 @@ export function createApp(options: Options) {
         chunks,
         tools,
         signal,
+        checkAccess: async () => {
+          await client.request(prefix + '/check', token, {});
+        },
       });
       if (signal.aborted) throw new Error('REQUEST_CANCELLED');
       let output;
@@ -347,7 +354,15 @@ export function createApp(options: Options) {
               : controller.signal.aborted
                 ? 'CANCELLED'
                 : 'PROVIDER_ERROR';
-        await client.request(prefix + '/fail', token, { status: state }).catch(() => undefined);
+        const terminal = await client
+          .request<TurnReply>(prefix + '/fail', token, { status: state })
+          .catch(() => undefined);
+        if (controller.signal.aborted && terminal?.status === 'CANCELLED')
+          return c.json({
+            ...terminal,
+            model: { mode: options.mode, id: null, version: null },
+            requestId: c.get('requestId'),
+          });
       }
       throw error;
     } finally {

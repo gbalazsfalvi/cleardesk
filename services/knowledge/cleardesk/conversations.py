@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from uuid import UUID, uuid4
 
+from .audit import record_activity
 from .db import Database
 from .documents import DocumentStore
 from .identity import IdentityStore
@@ -315,10 +316,7 @@ class ConversationStore:
                 "UPDATE turns SET status=?,answer=?,citations_json=?,model_json=? WHERE id=?",
                 [status, answer, json.dumps(citations), json.dumps(safe_model), turn],
             )
-            connection.execute(
-                "INSERT INTO activity VALUES (?,?,?,?,?,?)",
-                [str(uuid4()), workspace, actor.user_id, status, turn, self.db.now()],
-            )
+            record_activity(self.db, actor, status, turn)
         reply = self._reply(actor, self._turn(conversation, turn))
         # In-flight changes are distinct from a later replay whose historical access was revoked.
         if status == "ACCESS_CHANGED":
@@ -333,7 +331,9 @@ class ConversationStore:
             raise ValueError("INVALID_INPUT")
         row = self._turn(conversation, turn)
         if row[3] == "PENDING":
-            self.db.connection.execute("UPDATE turns SET status=? WHERE id=?", [status, turn])
+            with self.db.transaction() as connection:
+                connection.execute("UPDATE turns SET status=? WHERE id=?", [status, turn])
+                record_activity(self.db, actor, status, turn)
         return self._reply(actor, self._turn(conversation, turn))
 
     def cancel(self, token: str, workspace: str, conversation: str, turn: str) -> dict:

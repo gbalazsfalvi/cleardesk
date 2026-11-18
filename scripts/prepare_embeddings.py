@@ -77,17 +77,9 @@ def main() -> None:
         providers=["CPUExecutionProvider"],
         local_files_only=True,
     )
-    vectors = list(
-        model.embed(["ClearDesk verifies local embeddings without provider traffic."])
-    )
-    if (
-        len(vectors) != 1
-        or vectors[0].shape != (384,)
-        or not np.isfinite(vectors[0]).all()
-    ):
-        raise ValueError(
-            "The actual embedding model failed its dimensional/finite check"
-        )
+    vectors = list(model.embed(["ClearDesk verifies local embeddings without provider traffic."]))
+    if len(vectors) != 1 or vectors[0].shape != (384,) or not np.isfinite(vectors[0]).all():
+        raise ValueError("The actual embedding model failed its dimensional/finite check")
     files = []
     for path in sorted(directory.rglob("*")):
         if not path.is_file() or ".cache" in path.relative_to(directory).parts:

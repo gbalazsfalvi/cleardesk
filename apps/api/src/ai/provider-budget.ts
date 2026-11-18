@@ -11,13 +11,25 @@ import {
 } from 'node:fs';
 import { dirname } from 'node:path';
 import { randomUUID } from 'node:crypto';
+import { readSourceInput, searchInput } from '@cleardesk/contracts';
 
 export const GOOGLE_MODEL = 'gemini-3.5-flash-lite';
+const PROVIDER_ERRORS = [
+  'INVALID_ARGUMENT',
+  'UNAUTHENTICATED',
+  'PERMISSION_DENIED',
+  'RESOURCE_EXHAUSTED',
+  'NOT_FOUND',
+  'INTERNAL',
+  'UNAVAILABLE',
+  'DEADLINE_EXCEEDED',
+] as const;
 export interface ProviderObservation {
   httpStatus: number;
   modelVersion: string | null;
   inputTokens: number | null;
   outputTokens: number | null;
+  providerErrorCode: (typeof PROVIDER_ERRORS)[number] | null;
 }
 interface BudgetState {
   version: 1;
@@ -97,15 +109,13 @@ export function createBudgetedFetch(
   budget: ProviderBudget,
   upstream: typeof fetch = fetch,
   observe?: (value: ProviderObservation) => void,
+  beforeDispatch?: () => Promise<void>,
 ): typeof fetch {
   return async (input, init) => {
     const url = new URL(
       typeof input === 'string' ? input : input instanceof URL ? input.href : input.url,
     );
     const path = `/v1beta/models/${GOOGLE_MODEL}:`;
-    const queryAllowed = [...url.searchParams].every(
-      ([key, value]) => key === 'alt' && value === 'sse',
-    );
     if (
       url.protocol !== 'https:' ||
       url.hostname !== 'generativelanguage.googleapis.com' ||
@@ -113,16 +123,14 @@ export function createBudgetedFetch(
       url.username ||
       url.password ||
       url.hash ||
-      !queryAllowed ||
-      !['generateContent', 'streamGenerateContent'].some(
-        (method) => url.pathname === path + method,
-      ) ||
+      url.search !== '' ||
+      url.pathname !== path + 'generateContent' ||
       init?.method !== 'POST' ||
       typeof init.body !== 'string' ||
       Buffer.byteLength(init.body) > 65536
     )
       throw new Error('PROVIDER_REQUEST_REJECTED');
-    let parsed: { generationConfig?: { maxOutputTokens?: number } };
+    let parsed: { generationConfig?: { maxOutputTokens?: number }; tools?: unknown };
     try {
       parsed = JSON.parse(init.body);
     } catch {
@@ -131,6 +139,29 @@ export function createBudgetedFetch(
     const maximum = parsed.generationConfig?.maxOutputTokens;
     if (!Number.isInteger(maximum) || !maximum || maximum > 512 || maximum < 1)
       throw new Error('PROVIDER_REQUEST_REJECTED');
+    const allowedTools = ['searchKnowledge', 'readSource'];
+    if (parsed.tools !== undefined) {
+      if (!Array.isArray(parsed.tools) || parsed.tools.length > 2)
+        throw new Error('PROVIDER_REQUEST_REJECTED');
+      const names: string[] = [];
+      for (const tool of parsed.tools) {
+        if (
+          !tool ||
+          Object.keys(tool).some((key) => key !== 'functionDeclarations') ||
+          !Array.isArray(tool.functionDeclarations)
+        )
+          throw new Error('PROVIDER_REQUEST_REJECTED');
+        for (const declaration of tool.functionDeclarations) {
+          if (!allowedTools.includes(declaration?.name))
+            throw new Error('PROVIDER_REQUEST_REJECTED');
+          names.push(declaration.name);
+        }
+      }
+      if (names.length > 2 || new Set(names).size !== names.length)
+        throw new Error('PROVIDER_REQUEST_REJECTED');
+    }
+    if (init.signal?.aborted) throw new Error('REQUEST_CANCELLED');
+    await beforeDispatch?.();
     if (init.signal?.aborted) throw new Error('REQUEST_CANCELLED');
     budget.reserve();
     const response = await upstream(url.href, { ...init, redirect: 'error' });
@@ -151,14 +182,15 @@ export function createBudgetedFetch(
       }
     const bytes = Buffer.concat(pieces);
     let metadata: Record<string, unknown> = {};
-    if (response.ok && !url.pathname.endsWith(':streamGenerateContent')) {
-      try {
-        metadata = JSON.parse(bytes.toString('utf8'));
-      } catch {
-        /* The SDK validates the actual body. */
-      }
+    try {
+      const value: unknown = JSON.parse(bytes.toString('utf8'));
+      if (value && typeof value === 'object' && !Array.isArray(value))
+        metadata = value as Record<string, unknown>;
+    } catch {
+      /* The SDK validates the actual body. */
     }
     const usage = metadata.usageMetadata as Record<string, unknown> | undefined;
+    const providerError = (metadata.error as { status?: unknown } | undefined)?.status;
     const count = (value: unknown) =>
       typeof value === 'number' && Number.isSafeInteger(value) && value >= 0 ? value : null;
     observe?.({
@@ -170,7 +202,23 @@ export function createBudgetedFetch(
           : null,
       inputTokens: count(usage?.promptTokenCount),
       outputTokens: count(usage?.candidatesTokenCount),
+      providerErrorCode: PROVIDER_ERRORS.find((code) => code === providerError) ?? null,
     });
+    // Enforce the closed tool namespace before untrusted calls reach framework dispatch.
+    if (Array.isArray(metadata.candidates))
+      for (const candidate of metadata.candidates) {
+        if (!Array.isArray(candidate?.content?.parts)) continue;
+        for (const part of candidate.content.parts) {
+          if (!part?.functionCall) continue;
+          const call = part.functionCall;
+          if (call.name === 'searchKnowledge') {
+            if (!searchInput.safeParse(call.args).success) throw new Error('UNVERIFIED_RESPONSE');
+          } else if (call.name === 'readSource') {
+            if (!readSourceInput.safeParse(call.args).success)
+              throw new Error('UNVERIFIED_RESPONSE');
+          } else throw new Error('UNVERIFIED_RESPONSE');
+        }
+      }
     return new Response(bytes, { status: response.status, headers: response.headers });
   };
 }

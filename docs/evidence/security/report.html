@@ -1,0 +1,256 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'none'"><title>ClearDesk · Security evidence</title><style>body{font:15px/1.7 system-ui,sans-serif;color:#243e37;background:#f6f8f1;margin:0}main{max-width:1050px;margin:auto;padding:55px 28px}small{letter-spacing:2px;color:#637c50}h1{font-size:48px;letter-spacing:-2px;line-height:1.15;font-weight:500}p{color:#617456}.summary{padding:22px;border:1px solid #cddcc1;border-radius:8px;background:#eaf1df}table{border-collapse:collapse;width:100%;margin:30px 0}td,th{text-align:left;padding:13px;border-bottom:1px solid #dce5d4;font-size:13px}th{color:#7d926b}.status{font-weight:600}pre{white-space:pre-wrap;word-break:break-all;background:white;padding:20px;border:1px solid #dde7d4;border-radius:7px;font-size:12px}li{margin:10px 0;font-size:13px}footer{color:#879977;font-size:11px;margin-top:45px}</style><main><small>CLEARDESK / REFERENCE EVIDENCE</small><h1>Helpful. With tested boundaries.</h1><p>Deterministic adversarial and recording fixtures · 2026-11-18T11:58:02.950Z</p><div class="summary"><strong>PASS</strong> · 15/15 cases passed. No live model result is implied by this report.</div><table><thead><tr><th>Case</th><th>Boundary under test</th><th>Observed result</th></tr></thead><tbody><tr><td>E01</td><td>Session and private-service boundary</td><td class="status">PASS</td></tr><tr><td>E02</td><td>Retrieval before model context</td><td class="status">PASS</td></tr><tr><td>E03</td><td>Direct source and chunk access</td><td class="status">PASS</td></tr><tr><td>E04</td><td>Conversation ownership</td><td class="status">PASS</td></tr><tr><td>E05</td><td>Dual-workspace conversation context</td><td class="status">PASS</td></tr><tr><td>E06</td><td>People-team document permissions</td><td class="status">PASS</td></tr><tr><td>E07</td><td>Forged authority arguments</td><td class="status">PASS</td></tr><tr><td>E08</td><td>Prompt-injection authority containment</td><td class="status">PASS</td></tr><tr><td>E09</td><td>Citation provenance gate</td><td class="status">PASS</td></tr><tr><td>E10</td><td>In-flight permission change</td><td class="status">PASS</td></tr><tr><td>E11</td><td>Uncited context revocation</td><td class="status">PASS</td></tr><tr><td>E12</td><td>Adversarial text in the production renderer</td><td class="status">PASS</td></tr><tr><td>E13</td><td>Durable budget and bounded admission</td><td class="status">PASS</td></tr><tr><td>E14</td><td>Inputs, literal SQL values and persistence</td><td class="status">PASS</td></tr><tr><td>E15</td><td>Unscoped retriever positive control</td><td class="status">PASS</td></tr></tbody></table><h2>What this does and does not establish</h2><ul><li>Deterministic scenarios use adversarial/recording model fixtures, not Gemini completions.</li><li>The API is exercised in-process through Hono and across actual HTTP to the private DuckDB service; browser renderer checks use Chromium.</li><li>The unsafe retriever is an isolated synthetic test control, never a product configuration.</li><li>A valid citation proves source provenance, not semantic correctness or universal prompt-injection resistance.</li><li>Provider content already dispatched under valid access cannot be recalled after revocation.</li></ul><h2>Reproduction identity</h2><pre>{
+  &quot;sourceRevision&quot;: &quot;52c19443584572c217299b9aed71f1146d5618fa&quot;,
+  &quot;sourceTreeSha256&quot;: &quot;1f6c73b4202ab7025258dfd608d67e33d0bddb22a005bd036ea20bab1f4a18f7&quot;,
+  &quot;workingTreeDirty&quot;: true,
+  &quot;corpusSha256&quot;: &quot;4e52bffcfff2f9cd945f9c05b5d7bb5444212e8f26b47bdf17aff543224a9af8&quot;,
+  &quot;embeddingManifestSha256&quot;: &quot;7abeb180b9c205b60f1094e7deba05e39e36a92b7a7356c6fd4b412552757cb7&quot;,
+  &quot;node&quot;: &quot;24.14.0&quot;,
+  &quot;python&quot;: &quot;3.13.1&quot;,
+  &quot;mastra&quot;: &quot;1.84.0&quot;,
+  &quot;googleAdapter&quot;: &quot;4.0.122&quot;
+}</pre><h2>Complete observations</h2><pre>[
+  {
+    &quot;id&quot;: &quot;E01&quot;,
+    &quot;title&quot;: &quot;Session and private-service boundary&quot;,
+    &quot;checks&quot;: [
+      &quot;private_credential_required&quot;,
+      &quot;anonymous_denied&quot;,
+      &quot;csrf_and_origin_checked&quot;,
+      &quot;session_rotated_logout_invalid&quot;
+    ],
+    &quot;status&quot;: &quot;PASS&quot;,
+    &quot;assertions&quot;: {
+      &quot;private_credential_required&quot;: true,
+      &quot;anonymous_denied&quot;: true,
+      &quot;csrf_and_origin_checked&quot;: true,
+      &quot;session_rotated_logout_invalid&quot;: true
+    },
+    &quot;errorCode&quot;: null
+  },
+  {
+    &quot;id&quot;: &quot;E02&quot;,
+    &quot;title&quot;: &quot;Retrieval before model context&quot;,
+    &quot;checks&quot;: [
+      &quot;selected_workspace_only&quot;,
+      &quot;filter_before_model&quot;,
+      &quot;dual_workspace_user_covered&quot;
+    ],
+    &quot;status&quot;: &quot;PASS&quot;,
+    &quot;assertions&quot;: {
+      &quot;selected_workspace_only&quot;: true,
+      &quot;filter_before_model&quot;: true,
+      &quot;dual_workspace_user_covered&quot;: true
+    },
+    &quot;errorCode&quot;: null
+  },
+  {
+    &quot;id&quot;: &quot;E03&quot;,
+    &quot;title&quot;: &quot;Direct source and chunk access&quot;,
+    &quot;checks&quot;: [
+      &quot;foreign_source_denied&quot;,
+      &quot;foreign_chunk_denied&quot;,
+      &quot;own_source_readable&quot;
+    ],
+    &quot;status&quot;: &quot;PASS&quot;,
+    &quot;assertions&quot;: {
+      &quot;foreign_source_denied&quot;: true,
+      &quot;foreign_chunk_denied&quot;: true,
+      &quot;own_source_readable&quot;: true
+    },
+    &quot;errorCode&quot;: null
+  },
+  {
+    &quot;id&quot;: &quot;E04&quot;,
+    &quot;title&quot;: &quot;Conversation ownership&quot;,
+    &quot;checks&quot;: [
+      &quot;foreign_owner_denied&quot;,
+      &quot;foreign_workspace_thread_denied&quot;,
+      &quot;own_thread_readable&quot;
+    ],
+    &quot;status&quot;: &quot;PASS&quot;,
+    &quot;assertions&quot;: {
+      &quot;foreign_owner_denied&quot;: true,
+      &quot;foreign_workspace_thread_denied&quot;: true,
+      &quot;own_thread_readable&quot;: true
+    },
+    &quot;errorCode&quot;: null
+  },
+  {
+    &quot;id&quot;: &quot;E05&quot;,
+    &quot;title&quot;: &quot;Dual-workspace conversation context&quot;,
+    &quot;checks&quot;: [
+      &quot;history_selected_workspace_only&quot;,
+      &quot;context_selected_workspace_only&quot;
+    ],
+    &quot;status&quot;: &quot;PASS&quot;,
+    &quot;assertions&quot;: {
+      &quot;history_selected_workspace_only&quot;: true,
+      &quot;context_selected_workspace_only&quot;: true
+    },
+    &quot;errorCode&quot;: null
+  },
+  {
+    &quot;id&quot;: &quot;E06&quot;,
+    &quot;title&quot;: &quot;People-team document permissions&quot;,
+    &quot;checks&quot;: [
+      &quot;member_hr_denied&quot;,
+      &quot;hr_source_readable&quot;,
+      &quot;hr_not_admin&quot;
+    ],
+    &quot;status&quot;: &quot;PASS&quot;,
+    &quot;assertions&quot;: {
+      &quot;member_hr_denied&quot;: true,
+      &quot;hr_source_readable&quot;: true,
+      &quot;hr_not_admin&quot;: true
+    },
+    &quot;errorCode&quot;: null
+  },
+  {
+    &quot;id&quot;: &quot;E07&quot;,
+    &quot;title&quot;: &quot;Forged authority arguments&quot;,
+    &quot;checks&quot;: [
+      &quot;forged_tool_authority_rejected&quot;,
+      &quot;forged_public_role_rejected&quot;,
+      &quot;scoped_tool_still_works&quot;
+    ],
+    &quot;status&quot;: &quot;PASS&quot;,
+    &quot;assertions&quot;: {
+      &quot;forged_tool_authority_rejected&quot;: true,
+      &quot;forged_public_role_rejected&quot;: true,
+      &quot;scoped_tool_still_works&quot;: true
+    },
+    &quot;errorCode&quot;: null
+  },
+  {
+    &quot;id&quot;: &quot;E08&quot;,
+    &quot;title&quot;: &quot;Prompt-injection authority containment&quot;,
+    &quot;checks&quot;: [
+      &quot;injection_does_not_grant_foreign_read&quot;,
+      &quot;no_action_tool&quot;,
+      &quot;foreign_content_absent_from_context&quot;
+    ],
+    &quot;status&quot;: &quot;PASS&quot;,
+    &quot;assertions&quot;: {
+      &quot;injection_does_not_grant_foreign_read&quot;: true,
+      &quot;no_action_tool&quot;: true,
+      &quot;foreign_content_absent_from_context&quot;: true
+    },
+    &quot;errorCode&quot;: null
+  },
+  {
+    &quot;id&quot;: &quot;E09&quot;,
+    &quot;title&quot;: &quot;Citation provenance gate&quot;,
+    &quot;checks&quot;: [
+      &quot;fabricated_citation_rejected&quot;,
+      &quot;unverified_text_not_saved&quot;
+    ],
+    &quot;status&quot;: &quot;PASS&quot;,
+    &quot;assertions&quot;: {
+      &quot;fabricated_citation_rejected&quot;: true,
+      &quot;unverified_text_not_saved&quot;: true
+    },
+    &quot;errorCode&quot;: null
+  },
+  {
+    &quot;id&quot;: &quot;E10&quot;,
+    &quot;title&quot;: &quot;In-flight permission change&quot;,
+    &quot;checks&quot;: [
+      &quot;revision_conflict_returned&quot;,
+      &quot;answer_discarded&quot;,
+      &quot;stale_text_not_saved&quot;
+    ],
+    &quot;status&quot;: &quot;PASS&quot;,
+    &quot;assertions&quot;: {
+      &quot;revision_conflict_returned&quot;: true,
+      &quot;answer_discarded&quot;: true,
+      &quot;stale_text_not_saved&quot;: true
+    },
+    &quot;errorCode&quot;: null
+  },
+  {
+    &quot;id&quot;: &quot;E11&quot;,
+    &quot;title&quot;: &quot;Uncited context revocation&quot;,
+    &quot;checks&quot;: [
+      &quot;uncited_dependency_revoked&quot;,
+      &quot;history_redacted&quot;,
+      &quot;subsequent_context_clean&quot;
+    ],
+    &quot;status&quot;: &quot;PASS&quot;,
+    &quot;assertions&quot;: {
+      &quot;uncited_dependency_revoked&quot;: true,
+      &quot;history_redacted&quot;: true,
+      &quot;subsequent_context_clean&quot;: true
+    },
+    &quot;errorCode&quot;: null
+  },
+  {
+    &quot;id&quot;: &quot;E12&quot;,
+    &quot;title&quot;: &quot;Adversarial text in the production renderer&quot;,
+    &quot;checks&quot;: [
+      &quot;no_executable_html&quot;,
+      &quot;no_external_image_request&quot;,
+      &quot;no_arbitrary_link&quot;,
+      &quot;useful_markdown_preserved&quot;
+    ],
+    &quot;status&quot;: &quot;PASS&quot;,
+    &quot;assertions&quot;: {
+      &quot;no_executable_html&quot;: true,
+      &quot;no_external_image_request&quot;: true,
+      &quot;no_arbitrary_link&quot;: true,
+      &quot;useful_markdown_preserved&quot;: true
+    },
+    &quot;errorCode&quot;: null
+  },
+  {
+    &quot;id&quot;: &quot;E13&quot;,
+    &quot;title&quot;: &quot;Durable budget and bounded admission&quot;,
+    &quot;checks&quot;: [
+      &quot;failed_attempts_stay_spent&quot;,
+      &quot;restart_preserves_cap&quot;,
+      &quot;excess_dispatch_refused&quot;,
+      &quot;actor_and_global_caps&quot;
+    ],
+    &quot;status&quot;: &quot;PASS&quot;,
+    &quot;assertions&quot;: {
+      &quot;failed_attempts_stay_spent&quot;: true,
+      &quot;restart_preserves_cap&quot;: true,
+      &quot;excess_dispatch_refused&quot;: true,
+      &quot;actor_and_global_caps&quot;: true
+    },
+    &quot;errorCode&quot;: null
+  },
+  {
+    &quot;id&quot;: &quot;E14&quot;,
+    &quot;title&quot;: &quot;Inputs, literal SQL values and persistence&quot;,
+    &quot;checks&quot;: [
+      &quot;sql_title_is_literal&quot;,
+      &quot;ingest_bounds_checked&quot;,
+      &quot;source_hash_matches&quot;,
+      &quot;independent_session_reads_same_source&quot;
+    ],
+    &quot;status&quot;: &quot;PASS&quot;,
+    &quot;assertions&quot;: {
+      &quot;sql_title_is_literal&quot;: true,
+      &quot;ingest_bounds_checked&quot;: true,
+      &quot;source_hash_matches&quot;: true,
+      &quot;independent_session_reads_same_source&quot;: true
+    },
+    &quot;errorCode&quot;: null
+  },
+  {
+    &quot;id&quot;: &quot;E15&quot;,
+    &quot;title&quot;: &quot;Unscoped retriever positive control&quot;,
+    &quot;checks&quot;: [
+      &quot;unsafe_canary_observed&quot;,
+      &quot;hardened_canary_absent&quot;,
+      &quot;fixture_label_explicit&quot;
+    ],
+    &quot;status&quot;: &quot;PASS&quot;,
+    &quot;assertions&quot;: {
+      &quot;unsafe_canary_observed&quot;: true,
+      &quot;hardened_canary_absent&quot;: true,
+      &quot;fixture_label_explicit&quot;: true
+    },
+    &quot;errorCode&quot;: null
+  }
+]</pre><footer>ClearDesk 0.1.0 · Synthetic organizations only · Local verification</footer></main></html>

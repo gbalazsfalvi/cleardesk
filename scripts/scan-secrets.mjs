@@ -15,6 +15,11 @@ if (existsSync(env)) {
 }
 const runtime = join(root, '.local/private/runtime.json');
 if (existsSync(runtime)) secrets.push(JSON.parse(readFileSync(runtime, 'utf8')).serviceKey);
+const accountsFile = join(root, '.local/private/demo-accounts.json');
+if (existsSync(accountsFile)) {
+  for (const account of JSON.parse(readFileSync(accountsFile, 'utf8')).accounts)
+    secrets.push(account.password);
+}
 const files = execFileSync('git', ['ls-files', '-z'], { cwd: root, encoding: 'utf8' })
   .split('\0')
   .filter(Boolean);
@@ -33,6 +38,8 @@ const violations = [];
 for (const relative of new Set(files)) {
   const bytes = readFileSync(join(root, relative));
   if (/^\.env(?:\.|$)/.test(relative) && relative !== '.env.example') violations.push(relative);
+  if (/^\.local\/|(^|\/)\.venv\/|\.duckdb(?:\.wal)?$|^artifacts\/runs\//.test(relative))
+    violations.push(relative);
   if (
     secrets.some(
       (secret) =>
@@ -45,6 +52,9 @@ console.log(
   JSON.stringify({
     check: 'actual-private-secret-scan',
     files: new Set(files).size,
+    availablePrivateSecretsCompared: secrets.filter(
+      (value) => typeof value === 'string' && value.length > 15,
+    ).length,
     status: violations.length ? 'FAIL' : 'PASS',
     violations,
   }),

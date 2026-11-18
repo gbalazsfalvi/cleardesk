@@ -101,6 +101,10 @@ def test_in_flight_revision_change_discards_answer(chat):
         {"mode": "fixture", "id": "test", "version": "1"},
     )
     assert result["status"] == "ACCESS_CHANGED" and result["answer"] is None
+    stored = store.db.connection.execute(
+        "SELECT answer,citations_json FROM turns WHERE id=?", [turn["turnId"]]
+    ).fetchone()
+    assert stored == (None, "[]")
     assert "Must never be saved" not in str(store.messages(tokens["member"], north, thread["id"]))
 
 
@@ -160,6 +164,10 @@ def test_cancel_is_terminal_and_other_actor_cannot_cancel(chat):
         {"mode": "fixture", "id": "test", "version": "1"},
     )
     assert result["status"] == "CANCELLED" and result["answer"] is None
+    events = store.db.connection.execute(
+        "SELECT code FROM activity WHERE resource_id=?", [turn["turnId"]]
+    ).fetchall()
+    assert events == [("CANCELLED",)]
 
 
 def test_registry_rejects_foreign_chunks_despite_dual_membership(chat):

@@ -4,6 +4,7 @@ import { createTool } from '@mastra/core/tools';
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
 import { modelAnswer, readSourceInput, searchInput } from '@cleardesk/contracts';
 import { createBudgetedFetch, GOOGLE_MODEL, ProviderBudget } from './provider-budget.js';
+import type { ProviderObservation } from './provider-budget.js';
 import type { ModelRunner } from './types.js';
 
 const instructions = `You are ClearDesk, a read-only internal knowledge assistant.
@@ -21,6 +22,7 @@ export function mastraRunner(
   apiKey: string,
   budget: ProviderBudget,
   upstream: typeof fetch = fetch,
+  observe?: (value: ProviderObservation) => void,
 ): ModelRunner {
   return {
     async run(input) {
@@ -30,12 +32,18 @@ export function mastraRunner(
       let calls = 0;
       let inputTokens: number | null = null;
       let outputTokens: number | null = null;
-      const guarded = createBudgetedFetch(budget, upstream, (value) => {
-        calls++;
-        observedVersion = value.modelVersion;
-        if (value.inputTokens !== null) inputTokens = (inputTokens ?? 0) + value.inputTokens;
-        if (value.outputTokens !== null) outputTokens = (outputTokens ?? 0) + value.outputTokens;
-      });
+      const guarded = createBudgetedFetch(
+        budget,
+        upstream,
+        (value) => {
+          observe?.(value);
+          calls++;
+          observedVersion = value.modelVersion;
+          if (value.inputTokens !== null) inputTokens = (inputTokens ?? 0) + value.inputTokens;
+          if (value.outputTokens !== null) outputTokens = (outputTokens ?? 0) + value.outputTokens;
+        },
+        input.checkAccess,
+      );
       const google = createGoogleGenerativeAI({
         apiKey,
         fetch: async (url, init) => {
@@ -49,6 +57,8 @@ export function mastraRunner(
                 'BUDGET_LOCKED',
                 'BUDGET_STATE_INVALID',
                 'PROVIDER_REQUEST_REJECTED',
+                'ACCESS_CHANGED',
+                'UNVERIFIED_RESPONSE',
               ].includes(code)
             )
               transportFailure = code;
@@ -62,6 +72,7 @@ export function mastraRunner(
         instructions,
         model: [{ model: google(GOOGLE_MODEL), maxRetries: 0 }],
         durable: false,
+        skills: [],
         maxProcessorRetries: 0,
         tools: {
           searchKnowledge: createTool({

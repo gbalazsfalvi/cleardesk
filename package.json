@@ -2,6 +2,7 @@
   "name": "cleardesk",
   "version": "0.1.0",
   "private": true,
+  "license": "Apache-2.0",
   "type": "module",
   "workspaces": [
     "apps/api",
@@ -13,16 +14,23 @@
   },
   "scripts": {
     "bootstrap": "node scripts/cleardesk.mjs bootstrap",
+    "demo": "node scripts/cleardesk.mjs demo",
+    "validate:demo": "node scripts/cleardesk.mjs validate",
     "up": "node scripts/cleardesk.mjs up",
     "stop": "node scripts/cleardesk.mjs stop",
     "verify": "node scripts/cleardesk.mjs verify",
     "rehearse": "node scripts/cleardesk.mjs rehearse",
+    "evaluate:live": "node --import tsx verification/live-eval.ts",
+    "evaluate:retrieval": "node scripts/cleardesk.mjs retrieval",
+    "evidence:export": "node scripts/evidence.mjs export",
+    "evidence:verify": "node scripts/evidence.mjs verify",
+    "test:browser:live": "node scripts/cleardesk.mjs live-smoke",
     "build": "npm run build --workspace @cleardesk/contracts && npm run build --workspace @cleardesk/api && npm run build --workspace @cleardesk/web",
-    "typecheck": "tsc -p packages/contracts/tsconfig.json --noEmit && tsc -p apps/api/tsconfig.json --noEmit && tsc -p apps/web/tsconfig.json --noEmit",
+    "typecheck": "tsc -p packages/contracts/tsconfig.json --noEmit && tsc -p apps/api/tsconfig.json --noEmit && tsc -p apps/web/tsconfig.json --noEmit && tsc -p verification/tsconfig.json --noEmit",
     "test": "vitest run",
     "test:browser": "playwright test",
-    "format:check": "prettier --check apps packages scripts verification docs *.md *.json",
-    "format": "prettier --write apps packages scripts verification docs *.md *.json"
+    "format:check": "prettier --check apps packages scripts verification docs .github *.md *.json *.ts",
+    "format": "prettier --write apps packages scripts verification docs .github *.md *.json *.ts"
   },
   "devDependencies": {
     "typescript": "5.9.3",

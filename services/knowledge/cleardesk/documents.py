@@ -7,6 +7,7 @@ import math
 import re
 from uuid import uuid4
 
+from .audit import record_activity
 from .db import Database
 from .identity import IdentityStore
 from .policy import ActorContext, DocumentAccess, Role, require_document
@@ -116,7 +117,7 @@ class DocumentStore:
         return [self._summary(row) for row in rows]
 
     def ingest(self, token: str, workspace_id: str, data: dict, vectors: list[list[float]]) -> dict:
-        self.require_admin(token, workspace_id)
+        actor = self.require_admin(token, workspace_id)
         texts = validate_document(data)
         if len(texts) != len(vectors):
             raise ValueError("INVALID_EMBEDDING")
@@ -154,6 +155,7 @@ class DocumentStore:
                 ],
             )
             self._bump(workspace_id)
+            record_activity(self.db, actor, "DOCUMENT_INGESTED", document_id)
         return next(item for item in self.list(token, workspace_id) if item["id"] == document_id)
 
     def _bump(self, workspace_id: str) -> None:
@@ -172,6 +174,7 @@ class DocumentStore:
                 "UPDATE documents SET visibility=? WHERE id=?", [visibility, document_id]
             )
             self._bump(workspace_id)
+            record_activity(self.db, actor, "DOCUMENT_ACL_CHANGED", document_id)
         return {
             "document": next(
                 item for item in self.list(token, workspace_id) if item["id"] == document_id
@@ -185,6 +188,7 @@ class DocumentStore:
         with self.db.transaction() as connection:
             connection.execute("UPDATE documents SET deleted=TRUE WHERE id=?", [document_id])
             self._bump(workspace_id)
+            record_activity(self.db, actor, "DOCUMENT_DELETED", document_id)
 
     def source(
         self, token: str, workspace_id: str, document_id: str, chunk_id: str | None = None

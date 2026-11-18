@@ -32,11 +32,13 @@ const app = createApp({
   runner: runtime.mode === 'live' ? mastraRunner(apiKey, budget) : fixtureRunner,
   mode: runtime.mode,
   providerConfigured: Boolean(apiKey),
+  instanceId: runtime.instanceId,
   origins: ['http://127.0.0.1:4280', 'http://127.0.0.1:4282'],
   peer: (context) => getConnInfo(context).remote.address ?? 'unknown',
 });
 const webRoot = join(root, 'apps/web/dist');
 app.get('/assets/*', serveStatic({ root: webRoot }));
+app.get('/licenses/*', serveStatic({ root: webRoot }));
 app.get('/favicon.svg', serveStatic({ root: webRoot }));
 app.get('/', serveStatic({ path: join(webRoot, 'index.html') }));
 const server = serve({ fetch: app.fetch, hostname: '127.0.0.1', port: 4280 });

@@ -24,6 +24,7 @@ export interface ModelRun {
   chunks: SourceChunk[];
   tools: ScopedTools;
   signal: AbortSignal;
+  checkAccess(): Promise<void>;
 }
 export interface ModelResult {
   output: unknown;
