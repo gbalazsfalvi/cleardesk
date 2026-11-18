@@ -80,6 +80,8 @@ Normal application use has **no artificial total request quota**, as requested b
 
 ## Verify and rehearse
 
+The additional [prompt-injection assessment](docs/PROMPT_INJECTION_ASSESSMENT.md) records six deterministic authorization scenarios and six real Gemini scenarios, with byte-preserved reports and explicit limitations. It inspects protected context, answers, citations and history, including HR and cross-company access attempts. These observations supplement the original release evidence; they are not a claim of universal attack resistance.
+
 For the complete offline acceptance flow after setup:
 
 ```sh
