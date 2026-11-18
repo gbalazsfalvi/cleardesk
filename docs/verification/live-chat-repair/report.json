@@ -1,0 +1,41 @@
+{
+  "kind": "live-gemini-browser",
+  "status": "PASS",
+  "generatedAt": "2026-11-18T13:59:36.073Z",
+  "provenance": {
+    "sourceRevision": "def20da5fcabd1e91e386442a18ce3e71720dce3",
+    "sourceTreeSha256": "8fc7155d9b561f664c56284ca7a08fc34a1c9af92eea9b4b30c9e85ec4e11e87",
+    "sourceTreeHashMethod": "utf8-lf-v1",
+    "workingTreeDirty": false,
+    "corpusSha256": "4e52bffcfff2f9cd945f9c05b5d7bb5444212e8f26b47bdf17aff543224a9af8",
+    "embeddingManifestSha256": "7abeb180b9c205b60f1094e7deba05e39e36a92b7a7356c6fd4b412552757cb7",
+    "node": "24.14.0",
+    "python": "3.13.1",
+    "mastra": "1.84.0",
+    "googleAdapter": "4.0.122"
+  },
+  "model": {
+    "mode": "live",
+    "id": "gemini-3.5-flash-lite",
+    "version": "gemini-3.5-flash-lite"
+  },
+  "generationRequests": 1,
+  "budgetSpent": 13,
+  "limit": null,
+  "maxGenerationRequestsPerRun": 2,
+  "usage": {
+    "calls": 1,
+    "inputTokens": 1445,
+    "outputTokens": 175
+  },
+  "checks": {
+    "expectedAnswer": true,
+    "sourceOpenedWithCurrentAccess": true,
+    "liveModeVisible": true,
+    "noExternalBrowserRequests": true
+  },
+  "screenshot": "docs/images/live-travel-expenses.png",
+  "capture": "screenshot.png",
+  "screenshotSha256": "55b9900db237b0c88393a04cf9a87016b76fa72d479bb703782aae3b5cc13263",
+  "errorCode": null
+}

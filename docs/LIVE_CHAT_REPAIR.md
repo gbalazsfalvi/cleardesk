@@ -20,4 +20,21 @@ The owner explicitly requested that normal chat usage have no artificial request
 
 Regression tests reproduce the original thirteenth-request failure and misleading stored status before the fix. They check successful dispatch accounting beyond twelve, restart persistence, byte-preserved legacy history, bounded-counter rejection, and the specific stored allowance outcome.
 
-Final full-suite and live-browser results are recorded after verification. The browser check uses Jordan, explicitly selects Northstar Studio, asks about travel expenses, and opens the currently authorized source. Earlier v0.1.0 evidence remains historical and is not relabelled as a run of this correction.
+Observed checks:
+
+| Check                                               | Result                                                 |
+| --------------------------------------------------- | ------------------------------------------------------ |
+| TypeScript tests                                    | 54 passed                                              |
+| Python tests                                        | 59 passed; one upstream TestClient deprecation warning |
+| Strict types, formatting, Ruff and production build | Passed                                                 |
+| Offline browser journeys                            | 6 passed; paid test explicitly skipped                 |
+| Deterministic security rehearsal                    | 15/15 passed                                           |
+| Actual Gemini browser check                         | Passed; one generation HTTP request                    |
+| Application usage after the live check              | 13 recorded attempts, no artificial total quota        |
+| Original delivery/evaluation ledger                 | 12 attempts; byte-for-byte unchanged                   |
+
+The [live observation](verification/live-chat-repair/report.json) identifies clean source snapshot `def20da5fcabd1e91e386442a18ce3e71720dce3`. Its [SHA-256 inventory](verification/live-chat-repair/SHA256SUMS) binds the report and immutable capture. The browser check used Jordan, explicitly selected Northstar Studio, asked “How do I claim travel expenses?”, received the supported answer and opened its currently authorized source. The repair added one live generation to the nine automated delivery dispatches; the other three carried-forward dispatches were subsequent user requests. No old allowance was reset or refunded.
+
+Earlier v0.1.0 evidence remains historical and is not relabelled as a run of this correction. The current application is left running in live Gemini mode at http://127.0.0.1:4280.
+
+![Actual Gemini travel-expense answer and authorized source](images/live-travel-expenses.png)

@@ -7,3 +7,4 @@ package-lock.json
 **/requirements.lock
 artifacts/
 docs/evidence/
+docs/verification/
