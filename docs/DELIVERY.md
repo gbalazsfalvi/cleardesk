@@ -2,6 +2,8 @@
 
 Date: 18 November 2026. Target: local reference release today, before 23:59 Europe/Budapest. No remote publication or live portfolio deployment is included.
 
+This record describes the original v0.1.0 acceptance snapshot. The owner's subsequent removal of the artificial chat quota and its verification are recorded separately in [LIVE_CHAT_REPAIR.md](LIVE_CHAT_REPAIR.md).
+
 ## Observed environment
 
 Windows, Node 24.14.0, npm 11.9.0, Python 3.13.1. Exact package versions are in the lockfiles. Mastra 1.84.0 and Google provider 4.0.122 were checked against installed types/runtime and a synthetic wire fixture before paid verification.

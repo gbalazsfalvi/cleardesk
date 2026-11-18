@@ -25,7 +25,8 @@ The optional Vite development server uses port 4282 and proxies `/api` to the ap
 | `.local/private/runtime.json`           | Local instance identifier, private service credential and mode    |
 | `.local/private/processes.json`         | Owned process IDs and project marker                              |
 | `.local/private/demo-accounts.json`     | Generated demo passwords and seed IDs/checkpoint                  |
-| `.local/private/generation-budget.json` | Durable pre-dispatch generation allowance                         |
+| `.local/private/generation-budget.json` | Original bounded delivery/evaluation ledger; preserved on upgrade |
+| `.local/private/application-usage.json` | Count-only application dispatch history; no total request quota   |
 | `.local/data/cleardesk.duckdb`          | Identity, source text/vectors, threads, dependencies and activity |
 | `.local/models/`                        | Pinned embedding artifacts and actual hash manifest               |
 | `.local/delivery/`                      | Private execution/check logs                                      |
@@ -37,7 +38,7 @@ These are ignored by Git. Unix writes request private file modes; Windows uses t
 
 Every admitted generation HTTP request reserves one attempt before network dispatch. Framework/tool steps and retries use the same counted transport. A network error or cancelled uncertain request remains spent. Invalid state and a leftover lock fail closed. Responses are not replaced with a fixture answer when a live call fails.
 
-The cap is 12 attempts for this reference delivery. Read the final consumption in [DELIVERY.md](DELIVERY.md). The ledger is neither an external billing record nor resilient to a malicious local operator deleting files. There is no automatic refund or daily reset.
+The original delivery/evaluation ledger has a cap of 12 attempts. Normal application traffic now uses a separate count-only ledger with `limit: null`, following the owner's explicit request to remove the artificial chat quota. Its first initialization copies every original attempt, retaining identifiers/timestamps; the original ledger remains byte-for-byte unchanged. Existing application state is never silently reset. Read [LIVE_CHAT_REPAIR.md](LIVE_CHAT_REPAIR.md) for the correction. These ledgers are neither external billing records nor resilient to malicious local operators deleting files.
 
 For a stale lock, first stop and verify all owned ClearDesk/evaluation processes. Preserve the ledger and evidence before operator inspection; do not delete it merely to obtain a passing check. Any later, deliberately new operator-led allowance must archive the previous ledger and record why it changed. **Do not reset the delivery allowance during automated verification.** A real production product needs durable daily quotas, access-controlled administration and cost reconciliation.
 
@@ -54,7 +55,7 @@ Committed migration bytes are checksum-checked. Add a migration rather than edit
 1. Use fixture mode and run `npm run verify`.
 2. Run `npm run evaluate:retrieval` against the verified local model cache.
 3. Run `npm run rehearse` against the active synthetic data service and run the normal browser suite.
-4. Only when needed and within the remaining allowance, use the explicit live evaluator/browser command.
+4. Only when needed, use an explicit live command. The frozen evaluator obeys its original bounded ledger; the application browser smoke has at most two model steps and records its actual count-only usage delta.
 5. Export the latest run of each evidence kind and verify its hashes. Keep previous runs; a newer failure must not be silently replaced with an older success.
 
 Fixture, actual local-vector, live Gemini and browser observations answer different questions. Reports retain source identity/working-tree state. A report from an earlier implementation stage is not labelled as a final-source rerun.

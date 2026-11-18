@@ -16,6 +16,10 @@ SAFE_TEXT = {
     "ACCESS_CHANGED": "Knowledge permissions changed during this request. Please ask again.",
     "CANCELLED": "This request was cancelled.",
     "PROVIDER_ERROR": "The model could not complete this request. Please try again later.",
+    "BUDGET_EXHAUSTED": (
+        "The automated verification allowance is exhausted. "
+        "Normal application use has no request quota."
+    ),
     "UNVERIFIED_RESPONSE": "The model response could not be verified against its sources.",
     "PENDING": "This request is still in progress.",
 }
@@ -327,7 +331,13 @@ class ConversationStore:
         self, token: str, workspace: str, conversation: str, turn: str, status: str
     ) -> dict:
         actor = self._thread(token, workspace, conversation)
-        if status not in {"CANCELLED", "PROVIDER_ERROR", "UNVERIFIED_RESPONSE", "ACCESS_CHANGED"}:
+        if status not in {
+            "CANCELLED",
+            "PROVIDER_ERROR",
+            "UNVERIFIED_RESPONSE",
+            "ACCESS_CHANGED",
+            "BUDGET_EXHAUSTED",
+        }:
             raise ValueError("INVALID_INPUT")
         row = self._turn(conversation, turn)
         if row[3] == "PENDING":

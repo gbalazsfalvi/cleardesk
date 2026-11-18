@@ -73,7 +73,8 @@ for (const item of selected) {
   };
   records.push(record);
   // Keep two generation attempts available for the later actual-browser smoke.
-  if (providerBlocked || budget.snapshot().remaining < 4) {
+  const remaining = budget.snapshot().remaining;
+  if (providerBlocked || (remaining !== null && remaining < 4)) {
     record.errorCode = 'LIVE_ALLOWANCE_RESERVED';
     continue;
   }

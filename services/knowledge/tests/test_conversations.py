@@ -22,6 +22,16 @@ def prepare(chat, account="member", question="What is the policy?"):
     return thread, turn
 
 
+def test_budget_failure_history_explains_the_allowance_instead_of_a_provider_outage(chat):
+    store, _, tokens, north, _ = chat
+    thread, turn = prepare(chat)
+    store.finish_error(tokens["member"], north, thread["id"], turn["turnId"], "BUDGET_EXHAUSTED")
+    messages = store.messages(tokens["member"], north, thread["id"])
+    assert messages[-1]["status"] == "BUDGET_EXHAUSTED"
+    assert "allowance" in messages[-1]["text"]
+    assert "try again later" not in messages[-1]["text"].lower()
+
+
 def answer(chat, thread, turn, hits):
     store, _, tokens, north, _ = chat
     store.register_context(tokens["member"], north, thread["id"], turn["turnId"], hits)

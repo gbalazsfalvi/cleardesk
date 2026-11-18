@@ -40,7 +40,7 @@ const safeDetails: Record<string, string> = {
   BUSY: 'A request is already running, or the service is at capacity.',
   ACCESS_CHANGED: 'Knowledge access changed. Please ask again.',
   BUDGET_EXHAUSTED:
-    'The local live-model request allowance is exhausted. An operator must review the budget.',
+    'The automated verification allowance is exhausted. Normal application use has no request quota.',
   BUDGET_STATE_INVALID: 'The model budget needs operator review.',
   BUDGET_LOCKED: 'The model budget is locked for operator review.',
   PROVIDER_UNAVAILABLE:
@@ -349,11 +349,13 @@ export function createApp(options: Options) {
         const state =
           code === 'ACCESS_CHANGED'
             ? 'ACCESS_CHANGED'
-            : code === 'UNVERIFIED_RESPONSE'
-              ? 'UNVERIFIED_RESPONSE'
-              : controller.signal.aborted
-                ? 'CANCELLED'
-                : 'PROVIDER_ERROR';
+            : code === 'BUDGET_EXHAUSTED'
+              ? 'BUDGET_EXHAUSTED'
+              : code === 'UNVERIFIED_RESPONSE'
+                ? 'UNVERIFIED_RESPONSE'
+                : controller.signal.aborted
+                  ? 'CANCELLED'
+                  : 'PROVIDER_ERROR';
         const terminal = await client
           .request<TurnReply>(prefix + '/fail', token, { status: state })
           .catch(() => undefined);

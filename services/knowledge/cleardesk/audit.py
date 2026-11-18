@@ -15,6 +15,7 @@ EVENT_CODES = frozenset(
         "ACCESS_CHANGED",
         "CANCELLED",
         "PROVIDER_ERROR",
+        "BUDGET_EXHAUSTED",
         "UNVERIFIED_RESPONSE",
     }
 )

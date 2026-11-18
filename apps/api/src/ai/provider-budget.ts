@@ -33,17 +33,17 @@ export interface ProviderObservation {
 }
 interface BudgetState {
   version: 1;
-  limit: number;
+  limit: number | null;
   attempts: { id: string; reservedAt: string }[];
 }
 
-/** A durable pre-dispatch counter: failed, retried and uncertain requests remain spent. */
+/** Durable pre-dispatch accounting. An explicit null cap tracks application use without a quota. */
 export class ProviderBudget {
   constructor(
     private readonly path: string,
-    private readonly limit = 12,
+    private readonly limit: number | null = 12,
   ) {
-    if (!Number.isInteger(limit) || limit < 1 || limit > 12)
+    if (limit !== null && (!Number.isInteger(limit) || limit < 1 || limit > 12))
       throw new Error('BUDGET_STATE_INVALID');
   }
 
@@ -55,7 +55,7 @@ export class ProviderBudget {
         state.version !== 1 ||
         state.limit !== this.limit ||
         !Array.isArray(state.attempts) ||
-        state.attempts.length > state.limit ||
+        (state.limit !== null && state.attempts.length > state.limit) ||
         state.attempts.some((a) => typeof a.id !== 'string' || typeof a.reservedAt !== 'string') ||
         new Set(state.attempts.map((a) => a.id)).size !== state.attempts.length
       )
@@ -66,12 +66,12 @@ export class ProviderBudget {
     }
   }
 
-  snapshot(): { spent: number; limit: number; remaining: number } {
+  snapshot(): { spent: number; limit: number | null; remaining: number | null } {
     const state = this.read();
     return {
       spent: state.attempts.length,
       limit: state.limit,
-      remaining: state.limit - state.attempts.length,
+      remaining: state.limit === null ? null : state.limit - state.attempts.length,
     };
   }
 
@@ -85,7 +85,8 @@ export class ProviderBudget {
     }
     try {
       const state = this.read();
-      if (state.attempts.length >= state.limit) throw new Error('BUDGET_EXHAUSTED');
+      if (state.limit !== null && state.attempts.length >= state.limit)
+        throw new Error('BUDGET_EXHAUSTED');
       const id = randomUUID();
       state.attempts.push({ id, reservedAt: new Date().toISOString() });
       const temporary = this.path + '.' + id + '.tmp';
@@ -102,6 +103,25 @@ export class ProviderBudget {
       rmdirSync(lock);
     }
   }
+}
+
+/** Preserve the original verification ledger and carry its history into count-only application use. */
+export function applicationUsage(path: string, legacyPath: string): ProviderBudget {
+  if (!existsSync(path) && existsSync(legacyPath)) {
+    new ProviderBudget(legacyPath, 12).snapshot();
+    const legacy = JSON.parse(readFileSync(legacyPath, 'utf8')) as BudgetState;
+    mkdirSync(dirname(path), { recursive: true });
+    const fd = openSync(path, 'wx', 0o600);
+    try {
+      writeFileSync(fd, JSON.stringify({ ...legacy, limit: null }, null, 2) + '\n');
+      fsyncSync(fd);
+    } finally {
+      closeSync(fd);
+    }
+  }
+  const usage = new ProviderBudget(path, null);
+  usage.snapshot(); // Existing corruption fails closed; no history is silently reset.
+  return usage;
 }
 
 /** The SDK cannot redirect credentials or bypass accounting through retries/framework subcalls. */

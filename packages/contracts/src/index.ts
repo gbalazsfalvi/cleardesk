@@ -179,6 +179,7 @@ export type TurnStatus =
   | 'ACCESS_CHANGED'
   | 'CANCELLED'
   | 'PROVIDER_ERROR'
+  | 'BUDGET_EXHAUSTED'
   | 'UNVERIFIED_RESPONSE';
 export interface MessageView {
   id: string;

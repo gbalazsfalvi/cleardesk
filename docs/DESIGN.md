@@ -93,7 +93,7 @@ Default limits: question2,000characters; at most six retrieved chunks; bounded a
 
 Login rate20attempts/minute per actual peer, bounded Argon2 concurrency2. Chat rate6turns/minute per actor/workspace. Ignore untrusted forwarded-address headers. Python's DB queue is bounded32, embedding jobs at most two, document corpus/query limits are explicit. No automatic extension install or arbitrary SQL endpoint at runtime.
 
-The application has a configurable daily provider-request ceiling. Agent-run live verification has a separate hard cap of12generation HTTP requests, with every retry/subcall counted before dispatch. Track actual usage when returned; unresolved/cancelled dispatched calls do not receive an automatic budget refund. A request count/output bound is not presented as a precise dollar-cost guarantee.
+Following the owner's post-delivery correction, normal application use has no artificial total provider-request quota. Its separate durable count-only ledger preserves all original delivery attempts. The original bounded delivery/evaluation ledger remains unchanged; automated checks remain bounded and record actual dispatch counts. Track actual token usage when returned; unresolved/cancelled dispatches remain counted. Request and output accounting is not a precise dollar-cost guarantee.
 
 Use safe Markdown rendering without raw HTML, executable schemes or automatically fetched external images. Citation links are constructed same-origin routes. CSP restricts scripts/styles/connections to the app, prevents framing/objects and does not rely on the model to remove dangerous HTML.
 

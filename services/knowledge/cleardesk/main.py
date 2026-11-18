@@ -96,7 +96,9 @@ class Finish(StrictBody):
 
 
 class Failed(StrictBody):
-    status: Literal["CANCELLED", "PROVIDER_ERROR", "UNVERIFIED_RESPONSE", "ACCESS_CHANGED"]
+    status: Literal[
+        "CANCELLED", "PROVIDER_ERROR", "UNVERIFIED_RESPONSE", "ACCESS_CHANGED", "BUDGET_EXHAUSTED"
+    ]
 
 
 @dataclass

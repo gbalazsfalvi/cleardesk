@@ -28,7 +28,7 @@ One API instance admits one active turn per actor and two overall, with no waiti
 
 DuckDB has one owning process and one connection thread. There is no supported multi-writer deployment, replicated session store, HA/failover, durable agent workflow resumption or production backup automation. Restart marks interrupted PENDING turns as provider errors instead of pretending to resume them.
 
-The reference's 12-attempt ledger counts every admitted generation HTTP attempt, including failures/retries. It fails closed for invalid state/locks, and does not refund uncertain requests. Local file deletion, operator tampering, filesystem loss and machine compromise are outside this accounting guarantee. There is no automatic daily reset or production cost reconciliation.
+The original delivery/evaluation ledger has a 12-attempt cap. Normal application use now has no artificial total quota and uses a separate count-only ledger that carries forward the original attempts. Both count failed/uncertain dispatches and fail closed for invalid state or locks. Local file deletion, operator tampering, filesystem loss and machine compromise are outside this accounting guarantee. There is no production cost reconciliation; Google can impose its own provider/account quotas.
 
 ## Operations and dependencies
 

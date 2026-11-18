@@ -76,7 +76,7 @@ node scripts/cleardesk.mjs mode fixture
 
 These commands restart only the recorded ClearDesk instance. Live mode sends the permitted question, source excerpts and eligible history to Google's official API. Embeddings remain local. The fixed evaluated model is `gemini-3.5-flash-lite`; reports retain the version string actually returned by Google, even when it is an alias.
 
-The reference configuration has a **persistent total allowance of 12 generation HTTP attempts**. Retries, framework subcalls and uncertain failed dispatches stay counted; normal unit checks do not spend it. The ignored ledger is `.local/private/generation-budget.json`. Reaching the allowance is an explicit error. There is no automatic reset, silent fallback or claim that this is a production billing system. See [operations](docs/OPERATIONS.md) before operator changes.
+Normal application use has **no artificial total request quota**, as requested by the owner. The private `.local/private/application-usage.json` ledger counts every generation dispatch, including failed/uncertain requests and tool-loop subcalls. On upgrade, it carries forward all legacy attempts without changing `.local/private/generation-budget.json`, the original bounded delivery/evaluation ledger. Per-turn output, step, timeout and concurrency controls still apply. Google's own account quotas and billing remain external to this local accounting.
 
 ## Verify and rehearse
 
@@ -102,12 +102,12 @@ npm run test:browser
 Browser checks require the matching Playwright Chromium binary. If it is absent, install it with `npx playwright install chromium` (on a fresh Linux runner, system dependencies may also be required). Use fixture mode for the normal browser suite; the live test is skipped unless explicitly enabled by its lifecycle command.
 
 ```sh
-# These spend real generation requests and share the persistent 12-attempt cap.
+# These spend real generation requests. The evaluator retains its bounded delivery ledger.
 npm run evaluate:live
 npm run test:browser:live
 ```
 
-The frozen live evaluator keeps two attempts available for a browser smoke and preserves missing/error cases. Do not rerun paid checks just to obtain a greener report. Every run stays under ignored `artifacts/runs/`; the reviewed public snapshots are in [docs/evidence](docs/evidence/README.md).
+The frozen live evaluator retains the original bounded delivery ledger; an exhausted ledger remains exhausted. The browser smoke exercises the current application accounting and is bounded to two model steps per invocation. Both preserve errors and incomplete observations. Do not rerun paid checks just to obtain a greener report. Every run stays under ignored `artifacts/runs/`; the reviewed v0.1.0 snapshots are in [docs/evidence](docs/evidence/README.md). See the [live-chat repair record](docs/LIVE_CHAT_REPAIR.md) for the later quota correction.
 
 The [CI workflow](.github/workflows/verify.yml) is prepared with commit-pinned actions, read-only repository permissions and no paid provider secret. Local checks are observed; a remote CI pass is not claimed.
 

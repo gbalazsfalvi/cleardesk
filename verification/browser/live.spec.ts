@@ -16,7 +16,8 @@ interface BrowserObservation {
   model: TurnReply['model'] | null;
   generationRequests: number | null;
   budgetSpent: number | null;
-  limit: 12;
+  limit: null;
+  maxGenerationRequestsPerRun: 2;
   usage: TurnReply['usage'] | null;
   checks: {
     expectedAnswer: boolean;
@@ -35,7 +36,7 @@ test('bounded-live-browser: actual Gemini answer and trusted source', async ({ p
     process.env.CLEARDESK_LIVE_BROWSER !== '1',
     'Explicit opt-in required; offline checks never spend a generation request.',
   );
-  const budget = new ProviderBudget(join(root, '.local/private/generation-budget.json'), 12);
+  const budget = new ProviderBudget(join(root, '.local/private/application-usage.json'), null);
   const generatedAt = new Date().toISOString();
   const directory = join(
     root,
@@ -52,7 +53,8 @@ test('bounded-live-browser: actual Gemini answer and trusted source', async ({ p
     model: null,
     generationRequests: null,
     budgetSpent: null,
-    limit: 12,
+    limit: null,
+    maxGenerationRequestsPerRun: 2,
     usage: null,
     checks: {
       expectedAnswer: false,
@@ -68,7 +70,6 @@ test('bounded-live-browser: actual Gemini answer and trusted source', async ({ p
   try {
     before = budget.snapshot().spent;
     record.provenance = provenance(root);
-    expect(before).toBeLessThanOrEqual(10);
     await page.setViewportSize({ width: 1440, height: 1000 });
     const external: string[] = [];
     page.on('request', (request) => {
@@ -76,20 +77,21 @@ test('bounded-live-browser: actual Gemini answer and trusted source', async ({ p
         external.push(new URL(request.url()).hostname);
     });
     const demo = JSON.parse(readFileSync(join(root, '.local/private/demo-accounts.json'), 'utf8'));
-    const account = demo.accounts.find((item: { username: string }) => item.username === 'alex');
+    const account = demo.accounts.find((item: { username: string }) => item.username === 'jordan');
     await page.goto('/');
     await page.getByLabel('Username', { exact: true }).fill(account.username);
     await page.getByLabel('Password', { exact: true }).fill(account.password);
     await page.getByRole('button', { name: 'Open workspace', exact: true }).click();
     await expect(page.getByText('Gemini · live', { exact: true })).toBeVisible();
     record.checks.liveModeVisible = true;
-    await expect(page.locator('.count')).toHaveText('4');
+    await page
+      .getByLabel('Current workspace', { exact: true })
+      .selectOption({ label: 'Northstar Studio' });
+    await expect(page.locator('.count')).toHaveText('5');
     const completed = page.waitForResponse(
       (response) => response.request().method() === 'POST' && response.url().endsWith('/turns'),
     );
-    await page
-      .getByLabel('Ask your workspace knowledge')
-      .fill('How many remote days per week does Northstar allow?');
+    await page.getByLabel('Ask your workspace knowledge').fill('How do I claim travel expenses?');
     await page.getByRole('button', { name: 'Send question', exact: true }).click();
     const response = await completed;
     const result = (await response.json()) as TurnReply;
@@ -105,19 +107,17 @@ test('bounded-live-browser: actual Gemini answer and trusted source', async ({ p
           outputTokens: result.usage.outputTokens,
         }
       : null;
-    await expect(page.locator('.message.assistant')).toContainText(
-      /(?:three|3).*remote|remote.*(?:three|3)/i,
-    );
+    await expect(page.locator('.message.assistant')).toContainText(/30 days|thirty days/i);
     await expect(page.locator('.message.assistant')).not.toContainText('Offline fixture');
     record.checks.expectedAnswer = true;
-    await page.locator('.source-chip').filter({ hasText: 'Working at Northstar' }).first().click();
+    await page.locator('.source-chip').filter({ hasText: 'Travel & expenses' }).first().click();
     await expect(page.getByText('Current access checked', { exact: true })).toBeVisible();
     record.checks.sourceOpenedWithCurrentAccess = true;
     mkdirSync(join(root, 'docs/images'), { recursive: true });
-    const screenshot = join(root, 'docs/images/live-answer-and-source.png');
+    const screenshot = join(root, 'docs/images/live-travel-expenses.png');
     await page.screenshot({ path: screenshot, fullPage: true });
     copyFileSync(screenshot, join(directory, 'screenshot.png'));
-    record.screenshot = 'docs/images/live-answer-and-source.png';
+    record.screenshot = 'docs/images/live-travel-expenses.png';
     record.capture = 'screenshot.png';
     record.screenshotSha256 = createHash('sha256').update(readFileSync(screenshot)).digest('hex');
     const after = budget.snapshot().spent;
