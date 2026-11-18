@@ -1,10 +1,11 @@
 {
   "kind": "live-gemini-browser",
   "status": "PASS",
-  "generatedAt": "2026-11-18T13:09:17.807Z",
+  "generatedAt": "2026-11-18T13:26:18.491Z",
   "provenance": {
-    "sourceRevision": "c07965c41f17b0ae30f7b19395b8d36d317e6f15",
-    "sourceTreeSha256": "b9bee3876df7413a0dba58501f88f3596e9570f18fc0b95ac25e355f9b7583eb",
+    "sourceRevision": "79c6e6586e02d2064480a67720b92377b7d54f18",
+    "sourceTreeSha256": "fa892800e88d8b4bba4fa1285030b6c0f898a4200b697fb0fe533ed54db8ef07",
+    "sourceTreeHashMethod": "utf8-lf-v1",
     "workingTreeDirty": false,
     "corpusSha256": "4e52bffcfff2f9cd945f9c05b5d7bb5444212e8f26b47bdf17aff543224a9af8",
     "embeddingManifestSha256": "7abeb180b9c205b60f1094e7deba05e39e36a92b7a7356c6fd4b412552757cb7",
@@ -19,12 +20,12 @@
     "version": "gemini-3.5-flash-lite"
   },
   "generationRequests": 1,
-  "budgetSpent": 8,
+  "budgetSpent": 9,
   "limit": 12,
   "usage": {
     "calls": 1,
     "inputTokens": 1506,
-    "outputTokens": 128
+    "outputTokens": 140
   },
   "checks": {
     "expectedAnswer": true,
@@ -34,6 +35,6 @@
   },
   "screenshot": "docs/images/live-answer-and-source.png",
   "capture": "screenshot.png",
-  "screenshotSha256": "e6670b6a8ce3e10c72c69b0df12fad8d44320e3346d38a063a5146ffc1890817",
+  "screenshotSha256": "be0495fe6f3306d324ea3c0394b32f5d04f6859b3d235b0d64a79b28ff17f59b",
   "errorCode": null
 }

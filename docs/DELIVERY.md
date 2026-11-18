@@ -17,7 +17,7 @@ Final observed acceptance results are below. Fixture, local-vector, live-model a
 | Single-command setup/build/start                  | npm run demo passed on the verified host; cache and credentials reused without reset                |
 | Complete offline acceptance                       | npm run validate:demo passed, including restart and fresh reports                                   |
 | Strict production and verification types          | Passed                                                                                              |
-| TypeScript unit/adversarial/report tests          | 47 passed                                                                                           |
+| TypeScript unit/adversarial/report tests          | 51 passed                                                                                           |
 | Python real-DuckDB/policy/HTTP/bootstrap tests    | 58 passed; one recorded upstream TestClient deprecation warning                                     |
 | Real local-embedding retrieval                    | 5/5 known-answer top-1 hits plus 1 scope control passed; committed-source rerun passed              |
 | Deterministic security rehearsal                  | 15/15 cases passed; committed-source rerun passed                                                   |
@@ -29,7 +29,7 @@ Final observed acceptance results are below. Fixture, local-vector, live-model a
 | Python dependency consistency                     | pip check passed                                                                                    |
 | Remote CI                                         | Prepared only; not run remotely                                                                     |
 
-The five-question live suite used one generation per case. Together with the initial provider smoke and two browser smokes, total observed delivery usage is **8/12 generation HTTP attempts**. Four remain in the configured local allowance. No allowance reset was performed.
+The five-question live suite used one generation per case. Together with the initial provider smoke and three browser smokes, total observed delivery usage is **9/12 generation HTTP attempts**. Three remain in the configured local allowance. No allowance reset was performed.
 
 ## Issues found and corrected
 
@@ -62,6 +62,6 @@ The prepared CI workflow has not run on GitHub. The native Windows path, package
 
 Accepted local reference: **v0.1.0**, local **main** branch and annotated **v0.1.0** tag. Public GitHub/portfolio publication remains a follow-up.
 
-The final committed-source security, retrieval and live-browser runs identify snapshot **c07965c41f17b0ae30f7b19395b8d36d317e6f15**, with a clean working tree at each run. The production/verification source-tree SHA-256 is **b9bee3876df7413a0dba58501f88f3596e9570f18fc0b95ac25e355f9b7583eb**. Final release documentation/evidence commits retain that same source tree; they do not relabel the earlier five-question paid evaluation.
+The final committed-source security, retrieval and live-browser runs identify snapshot **79c6e6586e02d2064480a67720b92377b7d54f18**, with a clean working tree at each run. The production/verification source-tree SHA-256 is **fa892800e88d8b4bba4fa1285030b6c0f898a4200b697fb0fe533ed54db8ef07**, using the declared **utf8-lf-v1** method. An actual Git branch checkout/fast-forward preserved this identity. Final release documentation/evidence commits retain that same source tree; they do not relabel the earlier five-question paid evaluation or change its legacy raw-byte hash method.
 
 The complete offline acceptance, subsequent committed-source runs, final real-browser capture, actual-private-secret comparison, exported report hashes and staged-file review passed. The local app is left running at **http://127.0.0.1:4280** in live mode. Generated demo passwords remain in ignored **.local/private/demo-accounts.json**.

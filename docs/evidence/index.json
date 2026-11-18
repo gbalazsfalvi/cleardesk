@@ -1,22 +1,22 @@
 {
   "schemaVersion": 1,
-  "exportedAt": "2026-11-18T13:12:03.854Z",
+  "exportedAt": "2026-11-18T13:26:42.891Z",
   "artifacts": [
     {
       "directory": "security",
       "kind": "deterministic-fixture",
-      "sourceRun": "artifacts/runs/security/2026-11-18T13-08-04-117Z-e7e71228",
-      "generatedAt": "2026-11-18T13:08:04.117Z",
+      "sourceRun": "artifacts/runs/security/2026-11-18T13-25-34-561Z-9b4d5576",
+      "generatedAt": "2026-11-18T13:25:34.561Z",
       "status": "PASS",
-      "reportSha256": "71770b20d375ed2e61cb84d7b9701287fb20cafd83159bf65fc1d7b8233b29d9"
+      "reportSha256": "714561971de289b93961c670ed422e25322de3234a6400686b1c0ac01a973169"
     },
     {
       "directory": "retrieval",
       "kind": "actual-local-embedding-retrieval",
-      "sourceRun": "artifacts/runs/retrieval/2026-11-18T13-07-50.579495+00-00-c06de28f",
-      "generatedAt": "2026-11-18T13:07:50.579495+00:00",
+      "sourceRun": "artifacts/runs/retrieval/2026-11-18T13-25-28.494560+00-00-ad32ef60",
+      "generatedAt": "2026-11-18T13:25:28.494560+00:00",
       "status": "PASS",
-      "reportSha256": "337c9f61949d6c9f417362d66ecf2be22fe7f51f60f8cfcf5eebfc809044a4d8"
+      "reportSha256": "18e03201d51a28aba4ea996de0e4a59e3ad532ab72ba234d0272893541febcf2"
     },
     {
       "directory": "live",
@@ -29,10 +29,10 @@
     {
       "directory": "browser-live",
       "kind": "live-gemini-browser",
-      "sourceRun": "artifacts/runs/browser-live/2026-11-18T13-09-17-807Z-e3650333",
-      "generatedAt": "2026-11-18T13:09:17.807Z",
+      "sourceRun": "artifacts/runs/browser-live/2026-11-18T13-26-18-491Z-246ead4a",
+      "generatedAt": "2026-11-18T13:26:18.491Z",
       "status": "PASS",
-      "reportSha256": "c89906f04f501cfe2e9a9a77b0cfe45ac628c18ca2e3ed745355e049f2607ffc"
+      "reportSha256": "425cdbff2bb2f7814ef545d2fc5936ef34e95387bfbaf993e42dbc12615602f4"
     }
   ],
   "screenshots": [
@@ -46,7 +46,7 @@
     },
     {
       "path": "docs/images/live-answer-and-source.png",
-      "sha256": "e6670b6a8ce3e10c72c69b0df12fad8d44320e3346d38a063a5146ffc1890817"
+      "sha256": "be0495fe6f3306d324ea3c0394b32f5d04f6859b3d235b0d64a79b28ff17f59b"
     },
     {
       "path": "docs/images/mobile-workspace-fixture.png",
