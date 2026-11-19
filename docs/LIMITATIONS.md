@@ -34,8 +34,8 @@ The original delivery/evaluation ledger has a 12-attempt cap. Normal application
 
 Local HTTP deliberately uses a non-Secure cookie and loopback bindings. A production deployment requires a reviewed HTTPS/cookie/origin configuration and an appropriate identity/operations design. The Python child receives a whitelisted environment without provider credentials; private files on Windows inherit the operator profile's filesystem ACLs.
 
-The npm audit finding and disabled optional features are documented in [SECURITY.md](../SECURITY.md). Dependency pins make the evidence reproducible; they are not a promise that all transitive packages or future releases are vulnerability-free. The current Python TestClient emits one upstream httpx deprecation warning; the tested compatibility path still passes.
+The withdrawn npm advisory history and the disabled optional features are documented in [SECURITY.md](../SECURITY.md). Dependency pins make the evidence reproducible; they are not a promise that all transitive packages or future releases are vulnerability-free. The current Python TestClient emits one upstream httpx deprecation warning; the tested compatibility path still passes.
 
 ## Release evidence
 
-Screenshots are actual local captures. Fixture screenshots remain explicitly labelled. CI is prepared but has not run remotely. No GitHub publication, public deployment or portfolio edit is included in this local release. Source revisions/tree hashes and working-tree state are retained so observations from different implementation stages are not conflated.
+Screenshots are actual local captures. Fixture screenshots remain explicitly labelled. The source is published on GitHub; GitHub Actions runs `npm run verify` on Ubuntu but does not start the application, run browsers or call a model. The application lifecycle, browser journeys and HTTP review were observed on Windows only. There is no public running deployment of the application. Source revisions/tree hashes and working-tree state are retained so observations from different implementation stages are not conflated.

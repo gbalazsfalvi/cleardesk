@@ -1,0 +1,203 @@
+<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'"><title>ClearDesk · Local retrieval evidence</title><style>body{font:15px/1.7 system-ui;max-width:1000px;margin:50px auto;padding:24px;color:#294631;background:#f5f8ee}pre{white-space:pre-wrap;word-break:break-word;font-size:12px}</style><h1>Local vectors. Explicit sources.</h1><p>Actual pinned ONNX retrieval; no provider generation.</p><pre>{
+  &quot;kind&quot;: &quot;actual-local-embedding-retrieval&quot;,
+  &quot;status&quot;: &quot;PASS&quot;,
+  &quot;generatedAt&quot;: &quot;2026-11-19T07:47:26.177090+00:00&quot;,
+  &quot;providerGenerationRequests&quot;: 0,
+  &quot;sourceRevision&quot;: &quot;76e66fc693b6a476975defc216cf24c6623ddcb6&quot;,
+  &quot;workingTreeDirty&quot;: false,
+  &quot;corpusSha256&quot;: &quot;4e52bffcfff2f9cd945f9c05b5d7bb5444212e8f26b47bdf17aff543224a9af8&quot;,
+  &quot;evaluationScriptSha256&quot;: &quot;9c397a8ea52866c6d4fc8448c1f5045a64e3d8163e3a5794d4c7d70d2a6fcfd6&quot;,
+  &quot;retrievalCodeSha256&quot;: &quot;b43b872ed34f076cbdbeeb4609988c929f2f2261db3e7d657d43f2b583cdd3e0&quot;,
+  &quot;pythonLockSha256&quot;: &quot;fd58e6b4b66140b43136fb0d27a836427439cedbbea41b92283f114732674c3d&quot;,
+  &quot;model&quot;: {
+    &quot;model&quot;: &quot;BAAI/bge-small-en-v1.5&quot;,
+    &quot;repository&quot;: &quot;Qdrant/bge-small-en-v1.5-onnx-Q&quot;,
+    &quot;revision&quot;: &quot;aa8f8b060edb00e03bfdd08813a2949946c8ba55&quot;,
+    &quot;dimensions&quot;: 384,
+    &quot;provider&quot;: &quot;CPUExecutionProvider&quot;,
+    &quot;files&quot;: [
+      {
+        &quot;path&quot;: &quot;config.json&quot;,
+        &quot;bytes&quot;: 706,
+        &quot;sha256&quot;: &quot;13582bcf2effc85b7bf3d3f5532e686bc1c9ce86bb009d10f0ec33cbe92299dd&quot;
+      },
+      {
+        &quot;path&quot;: &quot;model_optimized.onnx&quot;,
+        &quot;bytes&quot;: 66465124,
+        &quot;sha256&quot;: &quot;51f1bd0addd6e859e42c2c8021a5e5461385bb676a649f4b269aa445449f2431&quot;
+      },
+      {
+        &quot;path&quot;: &quot;ort_config.json&quot;,
+        &quot;bytes&quot;: 1272,
+        &quot;sha256&quot;: &quot;99881c45e073696289224931dd48694398bc6bcd1fe7cb7018bca1e0cc00e1fc&quot;
+      },
+      {
+        &quot;path&quot;: &quot;README.md&quot;,
+        &quot;bytes&quot;: 900,
+        &quot;sha256&quot;: &quot;01e220eed6921254f7e086bb3506d1c03f019f5f747bb9ac2f6ec5ce541edc12&quot;
+      },
+      {
+        &quot;path&quot;: &quot;special_tokens_map.json&quot;,
+        &quot;bytes&quot;: 695,
+        &quot;sha256&quot;: &quot;5d5b662e421ea9fac075174bb0688ee0d9431699900b90662acd44b2a350503a&quot;
+      },
+      {
+        &quot;path&quot;: &quot;tokenizer.json&quot;,
+        &quot;bytes&quot;: 711396,
+        &quot;sha256&quot;: &quot;d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66&quot;
+      },
+      {
+        &quot;path&quot;: &quot;tokenizer_config.json&quot;,
+        &quot;bytes&quot;: 1242,
+        &quot;sha256&quot;: &quot;0b29c7bfc889e53b36d9dd3e686dd4300f6525110eaa98c76a5dafceb2029f53&quot;
+      },
+      {
+        &quot;path&quot;: &quot;vocab.txt&quot;,
+        &quot;bytes&quot;: 231508,
+        &quot;sha256&quot;: &quot;07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3&quot;
+      }
+    ]
+  },
+  &quot;knownAnswerTop1&quot;: {
+    &quot;correct&quot;: 5,
+    &quot;total&quot;: 5
+  },
+  &quot;cases&quot;: [
+    {
+      &quot;id&quot;: &quot;R01&quot;,
+      &quot;role&quot;: &quot;MEMBER&quot;,
+      &quot;workspace&quot;: &quot;northstar&quot;,
+      &quot;question&quot;: &quot;How many remote working days are permitted each week?&quot;,
+      &quot;expectedSource&quot;: &quot;handbook&quot;,
+      &quot;kind&quot;: &quot;known-answer&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;top3&quot;: [
+        {
+          &quot;sourceKey&quot;: &quot;handbook&quot;,
+          &quot;similarity&quot;: 0.688312
+        },
+        {
+          &quot;sourceKey&quot;: &quot;expenses&quot;,
+          &quot;similarity&quot;: 0.620686
+        },
+        {
+          &quot;sourceKey&quot;: &quot;security&quot;,
+          &quot;similarity&quot;: 0.493191
+        }
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;R02&quot;,
+      &quot;role&quot;: &quot;MEMBER&quot;,
+      &quot;workspace&quot;: &quot;northstar&quot;,
+      &quot;question&quot;: &quot;What is the daily meal allowance and expense claim deadline?&quot;,
+      &quot;expectedSource&quot;: &quot;expenses&quot;,
+      &quot;kind&quot;: &quot;known-answer&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;top3&quot;: [
+        {
+          &quot;sourceKey&quot;: &quot;expenses&quot;,
+          &quot;similarity&quot;: 0.749055
+        },
+        {
+          &quot;sourceKey&quot;: &quot;handbook&quot;,
+          &quot;similarity&quot;: 0.557473
+        },
+        {
+          &quot;sourceKey&quot;: &quot;hostile&quot;,
+          &quot;similarity&quot;: 0.492788
+        }
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;R03&quot;,
+      &quot;role&quot;: &quot;MEMBER&quot;,
+      &quot;workspace&quot;: &quot;northstar&quot;,
+      &quot;question&quot;: &quot;I lost my work device. How should I report it?&quot;,
+      &quot;expectedSource&quot;: &quot;security&quot;,
+      &quot;kind&quot;: &quot;known-answer&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;top3&quot;: [
+        {
+          &quot;sourceKey&quot;: &quot;security&quot;,
+          &quot;similarity&quot;: 0.718503
+        },
+        {
+          &quot;sourceKey&quot;: &quot;hostile&quot;,
+          &quot;similarity&quot;: 0.525957
+        },
+        {
+          &quot;sourceKey&quot;: &quot;handbook&quot;,
+          &quot;similarity&quot;: 0.517083
+        }
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;R04&quot;,
+      &quot;role&quot;: &quot;HR&quot;,
+      &quot;workspace&quot;: &quot;northstar&quot;,
+      &quot;question&quot;: &quot;When does the People team review compensation?&quot;,
+      &quot;expectedSource&quot;: &quot;hr&quot;,
+      &quot;kind&quot;: &quot;known-answer&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;top3&quot;: [
+        {
+          &quot;sourceKey&quot;: &quot;hr&quot;,
+          &quot;similarity&quot;: 0.717304
+        },
+        {
+          &quot;sourceKey&quot;: &quot;handbook&quot;,
+          &quot;similarity&quot;: 0.584836
+        },
+        {
+          &quot;sourceKey&quot;: &quot;expenses&quot;,
+          &quot;similarity&quot;: 0.566488
+        }
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;R05&quot;,
+      &quot;role&quot;: &quot;MEMBER&quot;,
+      &quot;workspace&quot;: &quot;northstar&quot;,
+      &quot;question&quot;: &quot;Harbor Glass Finch acquisition project details&quot;,
+      &quot;expectedSource&quot;: null,
+      &quot;kind&quot;: &quot;scope-control&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;top3&quot;: [
+        {
+          &quot;sourceKey&quot;: &quot;hostile&quot;,
+          &quot;similarity&quot;: 0.644515
+        },
+        {
+          &quot;sourceKey&quot;: &quot;handbook&quot;,
+          &quot;similarity&quot;: 0.505677
+        },
+        {
+          &quot;sourceKey&quot;: &quot;expenses&quot;,
+          &quot;similarity&quot;: 0.497198
+        }
+      ]
+    },
+    {
+      &quot;id&quot;: &quot;R06&quot;,
+      &quot;role&quot;: &quot;MEMBER&quot;,
+      &quot;workspace&quot;: &quot;harbor&quot;,
+      &quot;question&quot;: &quot;How do I request project repository access at Harbor?&quot;,
+      &quot;expectedSource&quot;: &quot;harbor-guide&quot;,
+      &quot;kind&quot;: &quot;known-answer&quot;,
+      &quot;status&quot;: &quot;PASS&quot;,
+      &quot;top3&quot;: [
+        {
+          &quot;sourceKey&quot;: &quot;harbor-guide&quot;,
+          &quot;similarity&quot;: 0.671988
+        }
+      ]
+    }
+  ],
+  &quot;limitations&quot;: [
+    &quot;Five fixed English known-answer questions and one scope control, not a statistical retrieval benchmark.&quot;,
+    &quot;Uses actual local ONNX vectors and production DuckDB retrieval code in a separate owned temporary database.&quot;,
+    &quot;No Gemini result, model answer or semantic-accuracy claim is implied.&quot;
+  ]
+}
+</pre></html>

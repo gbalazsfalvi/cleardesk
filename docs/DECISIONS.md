@@ -26,4 +26,4 @@ DuckDB's actual TIMESTAMPTZ conversion probe required `pytz`; it is explicitly h
 
 Google model discovery accepted the authorized credential and listed the fixed evaluated model. The installed Mastra/Google provider types and an actual synthetic wire test established interoperability; live generation then confirmed it. Provider-returned version aliases are preserved as observed rather than replaced with an assumed dated build.
 
-The dependency audit found an unpatched optional-globbing advisory. We did not downgrade Mastra to an unrelated old API or pretend an unofficial version was a fix. The narrow surface and remaining finding are documented in [SECURITY.md](../SECURITY.md).
+The dependency audit found an unpatched optional-globbing advisory. We did not downgrade Mastra to an unrelated old API or pretend an unofficial version was a fix. The narrow surface and remaining finding are documented in [SECURITY.md](../SECURITY.md). The advisory was later withdrawn upstream (18 November 2026, 15:38 UTC) without a version change; the narrow surface remains the policy.

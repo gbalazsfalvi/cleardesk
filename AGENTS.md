@@ -11,10 +11,11 @@ ClearDesk is an independent local reference product. All code, comments, UI, doc
 - Live automated verification is capped at 12 generation HTTP requests, including automatic retries and framework subcalls. Use synthetic documents, bounded inputs/outputs and the configured official Google endpoint only.
 - Use meaningful failing tests before behavioral implementation. Deterministic hostile-model and unscoped-retriever fixtures are labelled controls, not live model results. Do not reuse the production authorization function as the test oracle.
 - No arbitrary SQL, URL fetching, shell, filesystem or external-message tool. No unsafe product switch. Teaching controls remain test-only.
-- Keep Mastra workspace/filesystem/skill features disabled. The current unpatched optional-globbing advisory and its scope restrictions are recorded in SECURITY.md; do not expand that surface without a new review.
+- Keep Mastra workspace/filesystem/skill features disabled. The optional-globbing advisory history (disclosed in v0.1.0, withdrawn upstream on 18 November 2026, installed version unchanged) and its scope restrictions are recorded in SECURITY.md; do not expand that surface without a new review.
 - No raw HTML or automatic external-image loading from model output. All source links recheck current access.
 - Preserve incomplete/failed runs. Missing assertions, provider failures and fixture results are not PASS or Gemini evidence.
-- Pin dependencies, keep an authentic local Git history and document actual versions/results. This goal delivers a local GitHub-ready release; it does not publish remotely.
+- Pin dependencies, keep an authentic Git history and document actual versions/results. The source is published at https://github.com/gbalazsfalvi/cleardesk; published tags and reviewed evidence are immutable.
+- Browser journeys write screenshots only under ignored `artifacts/runs/`. Promote a reviewed capture into `docs/` deliberately; never overwrite hash-bound evidence images.
 - No selected-environment skills are currently available; use the supplied design, plan, tests and a recorded self-review.
 
 Read GOAL.md, docs/DESIGN.md, docs/API.md and docs/plans/2026-11-18-cleardesk-v1.md. Record progress under .local/delivery/ and observed release checks in docs/DELIVERY.md.

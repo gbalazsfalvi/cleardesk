@@ -2,7 +2,7 @@
 
 **Target:** 18 November 2026, 23:59 Europe/Budapest (22:59 UTC).
 **Deliverable:** a complete local, GitHub-ready internal knowledge assistant with a polished English interface and inspectable security evidence.
-**Current status:** verified local v0.1.0 reference completed; public publication remains separate.
+**Current status:** verified local v0.1.0 reference completed on 18 November 2026. Its public GitHub publication followed as v0.1.1 on 19 November 2026; see [CHANGELOG.md](CHANGELOG.md).
 
 The deadline is a target. Completion is determined by actual acceptance checks, never by weakening controls or inventing results.
 

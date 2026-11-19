@@ -1,0 +1,202 @@
+{
+  "kind": "actual-local-embedding-retrieval",
+  "status": "PASS",
+  "generatedAt": "2026-11-19T07:47:26.177090+00:00",
+  "providerGenerationRequests": 0,
+  "sourceRevision": "76e66fc693b6a476975defc216cf24c6623ddcb6",
+  "workingTreeDirty": false,
+  "corpusSha256": "4e52bffcfff2f9cd945f9c05b5d7bb5444212e8f26b47bdf17aff543224a9af8",
+  "evaluationScriptSha256": "9c397a8ea52866c6d4fc8448c1f5045a64e3d8163e3a5794d4c7d70d2a6fcfd6",
+  "retrievalCodeSha256": "b43b872ed34f076cbdbeeb4609988c929f2f2261db3e7d657d43f2b583cdd3e0",
+  "pythonLockSha256": "fd58e6b4b66140b43136fb0d27a836427439cedbbea41b92283f114732674c3d",
+  "model": {
+    "model": "BAAI/bge-small-en-v1.5",
+    "repository": "Qdrant/bge-small-en-v1.5-onnx-Q",
+    "revision": "aa8f8b060edb00e03bfdd08813a2949946c8ba55",
+    "dimensions": 384,
+    "provider": "CPUExecutionProvider",
+    "files": [
+      {
+        "path": "config.json",
+        "bytes": 706,
+        "sha256": "13582bcf2effc85b7bf3d3f5532e686bc1c9ce86bb009d10f0ec33cbe92299dd"
+      },
+      {
+        "path": "model_optimized.onnx",
+        "bytes": 66465124,
+        "sha256": "51f1bd0addd6e859e42c2c8021a5e5461385bb676a649f4b269aa445449f2431"
+      },
+      {
+        "path": "ort_config.json",
+        "bytes": 1272,
+        "sha256": "99881c45e073696289224931dd48694398bc6bcd1fe7cb7018bca1e0cc00e1fc"
+      },
+      {
+        "path": "README.md",
+        "bytes": 900,
+        "sha256": "01e220eed6921254f7e086bb3506d1c03f019f5f747bb9ac2f6ec5ce541edc12"
+      },
+      {
+        "path": "special_tokens_map.json",
+        "bytes": 695,
+        "sha256": "5d5b662e421ea9fac075174bb0688ee0d9431699900b90662acd44b2a350503a"
+      },
+      {
+        "path": "tokenizer.json",
+        "bytes": 711396,
+        "sha256": "d241a60d5e8f04cc1b2b3e9ef7a4921b27bf526d9f6050ab90f9267a1f9e5c66"
+      },
+      {
+        "path": "tokenizer_config.json",
+        "bytes": 1242,
+        "sha256": "0b29c7bfc889e53b36d9dd3e686dd4300f6525110eaa98c76a5dafceb2029f53"
+      },
+      {
+        "path": "vocab.txt",
+        "bytes": 231508,
+        "sha256": "07eced375cec144d27c900241f3e339478dec958f92fddbc551f295c992038a3"
+      }
+    ]
+  },
+  "knownAnswerTop1": {
+    "correct": 5,
+    "total": 5
+  },
+  "cases": [
+    {
+      "id": "R01",
+      "role": "MEMBER",
+      "workspace": "northstar",
+      "question": "How many remote working days are permitted each week?",
+      "expectedSource": "handbook",
+      "kind": "known-answer",
+      "status": "PASS",
+      "top3": [
+        {
+          "sourceKey": "handbook",
+          "similarity": 0.688312
+        },
+        {
+          "sourceKey": "expenses",
+          "similarity": 0.620686
+        },
+        {
+          "sourceKey": "security",
+          "similarity": 0.493191
+        }
+      ]
+    },
+    {
+      "id": "R02",
+      "role": "MEMBER",
+      "workspace": "northstar",
+      "question": "What is the daily meal allowance and expense claim deadline?",
+      "expectedSource": "expenses",
+      "kind": "known-answer",
+      "status": "PASS",
+      "top3": [
+        {
+          "sourceKey": "expenses",
+          "similarity": 0.749055
+        },
+        {
+          "sourceKey": "handbook",
+          "similarity": 0.557473
+        },
+        {
+          "sourceKey": "hostile",
+          "similarity": 0.492788
+        }
+      ]
+    },
+    {
+      "id": "R03",
+      "role": "MEMBER",
+      "workspace": "northstar",
+      "question": "I lost my work device. How should I report it?",
+      "expectedSource": "security",
+      "kind": "known-answer",
+      "status": "PASS",
+      "top3": [
+        {
+          "sourceKey": "security",
+          "similarity": 0.718503
+        },
+        {
+          "sourceKey": "hostile",
+          "similarity": 0.525957
+        },
+        {
+          "sourceKey": "handbook",
+          "similarity": 0.517083
+        }
+      ]
+    },
+    {
+      "id": "R04",
+      "role": "HR",
+      "workspace": "northstar",
+      "question": "When does the People team review compensation?",
+      "expectedSource": "hr",
+      "kind": "known-answer",
+      "status": "PASS",
+      "top3": [
+        {
+          "sourceKey": "hr",
+          "similarity": 0.717304
+        },
+        {
+          "sourceKey": "handbook",
+          "similarity": 0.584836
+        },
+        {
+          "sourceKey": "expenses",
+          "similarity": 0.566488
+        }
+      ]
+    },
+    {
+      "id": "R05",
+      "role": "MEMBER",
+      "workspace": "northstar",
+      "question": "Harbor Glass Finch acquisition project details",
+      "expectedSource": null,
+      "kind": "scope-control",
+      "status": "PASS",
+      "top3": [
+        {
+          "sourceKey": "hostile",
+          "similarity": 0.644515
+        },
+        {
+          "sourceKey": "handbook",
+          "similarity": 0.505677
+        },
+        {
+          "sourceKey": "expenses",
+          "similarity": 0.497198
+        }
+      ]
+    },
+    {
+      "id": "R06",
+      "role": "MEMBER",
+      "workspace": "harbor",
+      "question": "How do I request project repository access at Harbor?",
+      "expectedSource": "harbor-guide",
+      "kind": "known-answer",
+      "status": "PASS",
+      "top3": [
+        {
+          "sourceKey": "harbor-guide",
+          "similarity": 0.671988
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Five fixed English known-answer questions and one scope control, not a statistical retrieval benchmark.",
+    "Uses actual local ONNX vectors and production DuckDB retrieval code in a separate owned temporary database.",
+    "No Gemini result, model answer or semantic-accuracy claim is implied."
+  ]
+}

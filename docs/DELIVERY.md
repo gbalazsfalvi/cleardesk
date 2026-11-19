@@ -2,7 +2,7 @@
 
 Date: 18 November 2026. Target: local reference release today, before 23:59 Europe/Budapest. No remote publication or live portfolio deployment is included.
 
-This record describes the original v0.1.0 acceptance snapshot. The owner's subsequent removal of the artificial chat quota and its verification are recorded separately in [LIVE_CHAT_REPAIR.md](LIVE_CHAT_REPAIR.md).
+This record describes the original v0.1.0 acceptance snapshot. Its statements about remote publication, CI and the dependency audit describe 18 November 2026; the v0.1.1 publication section at the end records what changed. The owner's subsequent removal of the artificial chat quota and its verification are recorded separately in [LIVE_CHAT_REPAIR.md](LIVE_CHAT_REPAIR.md).
 
 ## Observed environment
 
@@ -79,3 +79,15 @@ The follow-up local `npm run verify` passed with 56 TypeScript tests, 59 Python 
 The [HTTP review and remediation record](LOCAL_SECURITY_REVIEW.md) preserves the failing initial exercise and successful follow-up. The review corrected a chunked-transfer bypass of the 16 KiB chat request limit and moved missing/blank CSRF rejection to the public boundary. The latter was an error-contract inconsistency, not a mutation bypass.
 
 Observed checks after the correction: 26/26 actual loopback HTTP scenarios, 7/7 new real-framing request regressions, the complete 63-test TypeScript suite, 59 Python tests, strict types/formatting/Ruff, production build and 15/15 deterministic security cases. The Python warning remains unchanged. The owned ClearDesk instance was rebuilt/restarted in its prior live mode; the review's HTTP/rehearsal checks dispatched no model generation. Historical evidence was preserved separately, and no remote publication or sibling-project change was performed.
+
+## v0.1.1 publication verification
+
+19 November 2026. The publication review started from the clean local revision `bdff56d` and found three blockers:
+
+- Browser journeys wrote screenshots straight into tracked `docs/images` files that the v0.1.0 evidence index binds by SHA-256. A routine `validate:demo` run would have dirtied the tree and broken `evidence:verify`. Captures now stay under the ignored run directory; a static regression failed before the change.
+- The composer and library printed “1 accessible sources”, and on narrow screens the workspace name ran into the count because the CSS rule targeted an element that did not exist. A count helper is unit-tested and the mobile browser journey asserts the visible toolbar text.
+- The audit record was stale: the disclosed `picomatch` advisory had been withdrawn upstream, with no installed version change. [SECURITY.md](../SECURITY.md) now records both states.
+
+Before the changes, `npm run verify` (63 TypeScript and 59 Python tests), `npm run evidence:verify` and `npm run assess:http` (26/26) passed at `bdff56d`. After the changes, `npm run validate:demo` and `npm run assess:http` passed at the clean source revision `76e66fc`. The [v0.1.1 verification record](verification/v0.1.1/README.md) lists the exact results and byte-preserved reports. No model generation request was sent, and the original evaluation ledger was not reset. The v0.1.0 evidence in `docs/evidence` and `docs/images` was not regenerated or edited.
+
+The repository was then published to GitHub with its authentic history, including the existing annotated local `v0.1.0` tag. The [release notes](releases/v0.1.1.md) describe the release; the GitHub release page names the tagged commit and its Actions run.

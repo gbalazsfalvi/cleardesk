@@ -8,15 +8,40 @@ Built with **Mastra + TypeScript, React + Vite, Python and DuckDB**. The model c
 
 ![An actual Gemini answer beside its currently authorized source](docs/images/live-answer-and-source.png)
 
-_Actual local browser capture with Gemini, not a design mockup. Other screenshots explicitly labelled “fixture” use the offline extractive adapter._
+_Actual local browser capture with a real Gemini answer (18 November 2026, v0.1.0 verification), not a design mockup. Screenshots labelled “fixture” use the offline extractive adapter and contain no model output._
+
+**Current release: [v0.1.1](https://github.com/gbalazsfalvi/cleardesk/releases/tag/v0.1.1)** — a local reference verified on 19 November 2026 at source revision `76e66fc`. See [what v0.1.1 verified](docs/verification/v0.1.1/README.md) and the [changelog](CHANGELOG.md).
 
 ## A five-minute review
+
+You do not need to start the application for this.
 
 1. Look at the [security rehearsal](docs/evidence/security/report.md) and [live Gemini evaluation](docs/evidence/live/report.md). They are separate evidence sets.
 2. Read the short [architecture](docs/ARCHITECTURE.md) and [threat model](docs/THREAT_MODEL.md).
 3. Inspect [scoped tools](apps/api/src/ai/scoped-tools.ts), [the counted provider transport](apps/api/src/ai/provider-budget.ts), [retrieval predicates](services/knowledge/cleardesk/documents.py) and [conversation provenance](services/knowledge/cleardesk/conversations.py).
 4. Check the [delivery record](docs/DELIVERY.md) for exact observed checks, source identities and known limitations.
-5. Run the offline demo below. A Google key is optional.
+5. Run the offline demo below if you want to try it. A Google key is optional.
+
+## What it looks like
+
+| Administrator library (fixture)                                                                                                                                  | Mobile workspace (fixture)                                                                                                      |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| ![Harbor Research knowledge library with workspace and HR-restricted documents](docs/images/knowledge-admin-fixture.png)                                         | ![Harbor Research mobile workspace with one accessible source](docs/verification/v0.1.1/browser/mobile-workspace-fixture.png)   |
+| Jordan administers Harbor Research: add a text/Markdown source, switch it between workspace and HR visibility, or remove it. Captured 18 November 2026 (v0.1.0). | Sam belongs to both companies but sees one selected workspace at a time. Captured 19 November 2026 by the v0.1.1 browser suite. |
+
+The [fixture answer with its opened source](docs/images/answer-and-source-fixture.png) and a [second live Gemini answer](docs/images/live-travel-expenses.png) are also available. Every capture is an actual local browser screenshot.
+
+## Evidence map
+
+Each set records its own source revision and working-tree state. Later sets do not relabel earlier ones.
+
+| Date        | Evidence                                                              | Kind                                                      |
+| ----------- | --------------------------------------------------------------------- | --------------------------------------------------------- |
+| 18 Nov 2026 | [v0.1.0 release evidence](docs/evidence/README.md)                    | Deterministic, local retrieval, live Gemini, live browser |
+| 18 Nov 2026 | [Live chat quota correction](docs/LIVE_CHAT_REPAIR.md)                | One live Gemini browser check plus regressions            |
+| 18 Nov 2026 | [Prompt-injection assessment](docs/PROMPT_INJECTION_ASSESSMENT.md)    | Six deterministic and six live Gemini scenarios           |
+| 18 Nov 2026 | [Local HTTP adversarial review](docs/LOCAL_SECURITY_REVIEW.md)        | 26 HTTP scenarios, failing-then-passing regressions       |
+| 19 Nov 2026 | [v0.1.1 publication verification](docs/verification/v0.1.1/README.md) | Offline acceptance, HTTP review, CI; no model request     |
 
 ## What is implemented
 
@@ -31,11 +56,11 @@ _Actual local browser capture with Gemini, not a design mockup. Other screenshot
 - Safe Markdown: no executable HTML, arbitrary model hyperlinks or automatic external images. Source access is checked again when opened.
 - Admin activity metadata for document changes and terminal turn outcomes, without raw prompts, documents, credentials or provider error bodies.
 
-This is a **local reference release**, not a claim of universal prompt-injection resistance or production compliance. The dependency tree has a [disclosed upstream advisory](SECURITY.md#known-dependency-advisory); affected optional workspace/glob features are disabled. No patched upstream release was available at the recorded audit.
+This is a **local reference release**, not a claim of universal prompt-injection resistance or production compliance. The v0.1.0 audit disclosed an upstream `picomatch` advisory; GitHub has since withdrawn it, and current audits report zero findings with the same installed version. The [advisory history](SECURITY.md#dependency-advisory-history) records both states. Optional Mastra workspace/glob features remain disabled.
 
 ## Run locally
 
-Requirements: Node **24.14.x**, npm **11**, Python **3.13.x**, Git, and free loopback ports **4280/4281**. The verified host was Windows; the prepared CI workflow targets Linux and has not been run remotely.
+Requirements: Node **24.14.x**, npm **11**, Python **3.13.x**, Git, and free loopback ports **4280/4281**. The complete application lifecycle and browser journeys were verified on Windows. [GitHub Actions](https://github.com/gbalazsfalvi/cleardesk/actions/workflows/verify.yml) runs `npm run verify` on Ubuntu; it does not start the application, run browsers or call a model.
 
 ```sh
 npm run demo
@@ -111,9 +136,9 @@ npm run evaluate:live
 npm run test:browser:live
 ```
 
-The frozen live evaluator retains the original bounded delivery ledger; an exhausted ledger remains exhausted. The browser smoke exercises the current application accounting and is bounded to two model steps per invocation. Both preserve errors and incomplete observations. Do not rerun paid checks just to obtain a greener report. Every run stays under ignored `artifacts/runs/`; the reviewed v0.1.0 snapshots are in [docs/evidence](docs/evidence/README.md). See the [live-chat repair record](docs/LIVE_CHAT_REPAIR.md) for the later quota correction.
+The frozen live evaluator retains the original bounded delivery ledger; an exhausted ledger remains exhausted. The browser smoke exercises the current application accounting and is bounded to two model steps per invocation. Both preserve errors and incomplete observations. Do not rerun paid checks just to obtain a greener report. Every run, including browser screenshots, stays under ignored `artifacts/runs/`; a reviewed capture is promoted into `docs/` deliberately. The reviewed v0.1.0 snapshots are in [docs/evidence](docs/evidence/README.md) and the v0.1.1 snapshots in [docs/verification/v0.1.1](docs/verification/v0.1.1/README.md). See the [live-chat repair record](docs/LIVE_CHAT_REPAIR.md) for the later quota correction.
 
-The [CI workflow](.github/workflows/verify.yml) is prepared with commit-pinned actions, read-only repository permissions and no paid provider secret. Local checks are observed; a remote CI pass is not claimed.
+The [CI workflow](.github/workflows/verify.yml) uses commit-pinned actions, read-only repository permissions and no provider secret. The [v0.1.1 GitHub release](https://github.com/gbalazsfalvi/cleardesk/releases/tag/v0.1.1) names the tagged commit and its workflow run.
 
 ## Project map
 
