@@ -1,0 +1,240 @@
+{
+  "kind": "actual-loopback-http-adversarial",
+  "stage": "observe",
+  "generatedAt": "2026-11-19T08:21:26.253Z",
+  "source": {
+    "sourceRevision": "a82a13ca61edcad0f91f017d17cec3f6ec62444a",
+    "sourceTreeSha256": "a61014eec93f0507c488f049cd63d91bb224648638d175967301a98904dbf31b",
+    "sourceTreeHashMethod": "utf8-lf-v1",
+    "workingTreeDirty": false,
+    "corpusSha256": "4e52bffcfff2f9cd945f9c05b5d7bb5444212e8f26b47bdf17aff543224a9af8",
+    "embeddingManifestSha256": "7abeb180b9c205b60f1094e7deba05e39e36a92b7a7356c6fd4b412552757cb7",
+    "node": "24.14.0",
+    "python": "3.13.1",
+    "mastra": "1.84.0",
+    "googleAdapter": "4.0.122"
+  },
+  "status": "PASS",
+  "records": [
+    {
+      "id": "H01-anonymous-documents",
+      "expectedStatus": 401,
+      "observedStatus": 401,
+      "protectedContentAbsent": true,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H02-host-rebinding",
+      "expectedStatus": 403,
+      "observedStatus": 403,
+      "protectedContentAbsent": true,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H03-cross-origin-mutation",
+      "expectedStatus": 403,
+      "observedStatus": 403,
+      "protectedContentAbsent": true,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H04-missing-csrf",
+      "expectedStatus": 403,
+      "observedStatus": 403,
+      "protectedContentAbsent": true,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H05-other-session-csrf",
+      "expectedStatus": 403,
+      "observedStatus": 403,
+      "protectedContentAbsent": true,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H06-member-hr-denied",
+      "expectedStatus": 404,
+      "observedStatus": 404,
+      "protectedContentAbsent": true,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H07-member-foreign-source-denied",
+      "expectedStatus": 404,
+      "observedStatus": 404,
+      "protectedContentAbsent": true,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H08-foreign-workspace-denied",
+      "expectedStatus": 404,
+      "observedStatus": 404,
+      "protectedContentAbsent": true,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H09-dual-member-wrong-scope-denied",
+      "expectedStatus": 404,
+      "observedStatus": 404,
+      "protectedContentAbsent": true,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H10-dual-member-correct-scope-control",
+      "expectedStatus": 200,
+      "observedStatus": 200,
+      "protectedContentAbsent": null,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H11-forged-internal-identity-ignored",
+      "expectedStatus": 404,
+      "observedStatus": 404,
+      "protectedContentAbsent": true,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H12-member-cannot-change-acl",
+      "expectedStatus": 403,
+      "observedStatus": 403,
+      "protectedContentAbsent": true,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H13-mass-assigned-role-rejected",
+      "expectedStatus": 400,
+      "observedStatus": 400,
+      "protectedContentAbsent": true,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H14-upload-path-traversal-rejected",
+      "expectedStatus": 400,
+      "observedStatus": 400,
+      "protectedContentAbsent": true,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H15-malformed-json",
+      "expectedStatus": 400,
+      "observedStatus": 400,
+      "protectedContentAbsent": true,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H16-declared-chat-byte-limit",
+      "expectedStatus": 413,
+      "observedStatus": 413,
+      "protectedContentAbsent": true,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H17-chunked-chat-byte-limit",
+      "expectedStatus": 413,
+      "observedStatus": 413,
+      "protectedContentAbsent": true,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H18-chunked-global-byte-limit",
+      "expectedStatus": 413,
+      "observedStatus": 413,
+      "protectedContentAbsent": true,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H19-private-service-forged-credential",
+      "expectedStatus": 401,
+      "observedStatus": 401,
+      "protectedContentAbsent": true,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H20-encoded-static-traversal",
+      "expectedStatus": 404,
+      "observedStatus": 404,
+      "protectedContentAbsent": true,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H21-backslash-static-traversal",
+      "expectedStatus": 404,
+      "observedStatus": 404,
+      "protectedContentAbsent": true,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H22-sql-shaped-identifier-rejected",
+      "expectedStatus": 400,
+      "observedStatus": 400,
+      "protectedContentAbsent": true,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H23-no-get-mutation-route",
+      "expectedStatus": 404,
+      "observedStatus": 404,
+      "protectedContentAbsent": true,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H24-authorized-hr-control",
+      "expectedStatus": 200,
+      "observedStatus": 200,
+      "protectedContentAbsent": null,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H25-authorized-member-control",
+      "expectedStatus": 200,
+      "observedStatus": 200,
+      "protectedContentAbsent": null,
+      "status": "PASS",
+      "errorCode": null
+    },
+    {
+      "id": "H26-error-security-headers",
+      "expectedStatus": 403,
+      "observedStatus": 403,
+      "protectedContentAbsent": true,
+      "status": "PASS",
+      "errorCode": null
+    }
+  ],
+  "requests": 35,
+  "sessionCleanupPassed": true,
+  "applicationGenerationDelta": 0,
+  "originalEvaluationLedgerUnchanged": true,
+  "errorCode": null,
+  "limitations": [
+    "Bounded local HTTP checks, not a full penetration test or load benchmark.",
+    "No model turn was created: byte-limit checks use a nonexistent conversation UUID.",
+    "Response bodies, cookies, passwords, CSRF values and service credentials are omitted.",
+    "The source snapshot identifies this checkout; the operator must build and start this same revision before probing.",
+    "Prerequisites are a running owned app/data service and the unchanged synthetic seed accounts."
+  ]
+}

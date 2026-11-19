@@ -13,6 +13,9 @@ First public release. It contains all changes made after the local v0.1.0 tag.
 - Missing, blank or overlong CSRF headers are rejected with `403 CSRF_REJECTED` before the private service is contacted.
 - The composer and knowledge library use singular counts (“1 accessible source”). On narrow screens the workspace label no longer runs into the count.
 - Browser journeys no longer overwrite hash-bound images in `docs/images`. Screenshots stay in the ignored run directory until a reviewed copy is promoted.
+- `npm run verify` now succeeds on a fresh clone: type checking builds the shared contracts package first instead of relying on a previously built `dist/`.
+- `npm run assess:http` works on a fresh install that has not made a live request yet. A missing generation ledger is observed as zero attempts and compared before and after, instead of crashing.
+- The GitHub Actions workflow runs on `ubuntu-24.04`, which provides the verified Python 3.13.1; `ubuntu-latest` (26.04) does not.
 
 ### Added
 

@@ -10,7 +10,7 @@ Built with **Mastra + TypeScript, React + Vite, Python and DuckDB**. The model c
 
 _Actual local browser capture with a real Gemini answer (18 November 2026, v0.1.0 verification), not a design mockup. Screenshots labelled “fixture” use the offline extractive adapter and contain no model output._
 
-**Current release: [v0.1.1](https://github.com/gbalazsfalvi/cleardesk/releases/tag/v0.1.1)** — a local reference verified on 19 November 2026 at source revision `76e66fc`. See [what v0.1.1 verified](docs/verification/v0.1.1/README.md) and the [changelog](CHANGELOG.md).
+**Current release: [v0.1.1](https://github.com/gbalazsfalvi/cleardesk/releases/tag/v0.1.1)** — a local reference verified on 19 November 2026 from a fresh clone at source revision `a82a13c`. See [what v0.1.1 verified](docs/verification/v0.1.1/README.md) and the [changelog](CHANGELOG.md).
 
 ## A five-minute review
 
@@ -24,10 +24,10 @@ You do not need to start the application for this.
 
 ## What it looks like
 
-| Administrator library (fixture)                                                                                                                                  | Mobile workspace (fixture)                                                                                                      |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| ![Harbor Research knowledge library with workspace and HR-restricted documents](docs/images/knowledge-admin-fixture.png)                                         | ![Harbor Research mobile workspace with one accessible source](docs/verification/v0.1.1/browser/mobile-workspace-fixture.png)   |
-| Jordan administers Harbor Research: add a text/Markdown source, switch it between workspace and HR visibility, or remove it. Captured 18 November 2026 (v0.1.0). | Sam belongs to both companies but sees one selected workspace at a time. Captured 19 November 2026 by the v0.1.1 browser suite. |
+| Administrator library (fixture)                                                                                                                                  | Mobile workspace (fixture)                                                                                                                           |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| ![Harbor Research knowledge library with workspace and HR-restricted documents](docs/images/knowledge-admin-fixture.png)                                         | ![Harbor Research mobile workspace with one accessible source](docs/verification/v0.1.1/76e66fc-local-instance/browser/mobile-workspace-fixture.png) |
+| Jordan administers Harbor Research: add a text/Markdown source, switch it between workspace and HR visibility, or remove it. Captured 18 November 2026 (v0.1.0). | Sam belongs to both companies but sees one selected workspace at a time. Captured 19 November 2026 by the v0.1.1 browser suite.                      |
 
 The [fixture answer with its opened source](docs/images/answer-and-source-fixture.png) and a [second live Gemini answer](docs/images/live-travel-expenses.png) are also available. Every capture is an actual local browser screenshot.
 
@@ -41,7 +41,7 @@ Each set records its own source revision and working-tree state. Later sets do n
 | 18 Nov 2026 | [Live chat quota correction](docs/LIVE_CHAT_REPAIR.md)                | One live Gemini browser check plus regressions            |
 | 18 Nov 2026 | [Prompt-injection assessment](docs/PROMPT_INJECTION_ASSESSMENT.md)    | Six deterministic and six live Gemini scenarios           |
 | 18 Nov 2026 | [Local HTTP adversarial review](docs/LOCAL_SECURITY_REVIEW.md)        | 26 HTTP scenarios, failing-then-passing regressions       |
-| 19 Nov 2026 | [v0.1.1 publication verification](docs/verification/v0.1.1/README.md) | Offline acceptance, HTTP review, CI; no model request     |
+| 19 Nov 2026 | [v0.1.1 publication verification](docs/verification/v0.1.1/README.md) | Fresh-clone acceptance, HTTP review, CI; no model request |
 
 ## What is implemented
 

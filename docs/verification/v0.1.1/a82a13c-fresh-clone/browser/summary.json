@@ -1,0 +1,78 @@
+{
+  "kind": "offline-browser-journeys",
+  "derivedFrom": "Playwright JSON reporter output; machine-local paths, durations and error details removed",
+  "runStartedAt": "2026-11-19T08:21:09.612Z",
+  "sourceRevision": "a82a13ca61edcad0f91f017d17cec3f6ec62444a",
+  "modelMode": "fixture",
+  "stats": {
+    "expected": 6,
+    "skipped": 1,
+    "unexpected": 0,
+    "flaky": 0
+  },
+  "tests": [
+    {
+      "file": "verification/browser/live.spec.ts",
+      "title": "bounded-live-browser: actual Gemini answer and trusted source",
+      "status": "skipped",
+      "outcomes": [
+        "skipped"
+      ],
+      "retries": 0
+    },
+    {
+      "file": "verification/browser/product.spec.ts",
+      "title": "login errors and a controlled provider outage recover without a substituted answer",
+      "status": "expected",
+      "outcomes": [
+        "passed"
+      ],
+      "retries": 0
+    },
+    {
+      "file": "verification/browser/product.spec.ts",
+      "title": "member questions, trusted sources, history and safe document rendering",
+      "status": "expected",
+      "outcomes": [
+        "passed"
+      ],
+      "retries": 0
+    },
+    {
+      "file": "verification/browser/product.spec.ts",
+      "title": "dual-workspace navigation clears prior content and mobile layout fits",
+      "status": "expected",
+      "outcomes": [
+        "passed"
+      ],
+      "retries": 0
+    },
+    {
+      "file": "verification/browser/product.spec.ts",
+      "title": "HR sees restricted knowledge without admin mutation controls",
+      "status": "expected",
+      "outcomes": [
+        "passed"
+      ],
+      "retries": 0
+    },
+    {
+      "file": "verification/browser/product.spec.ts",
+      "title": "administrator ingests and removes a document through human-only controls",
+      "status": "expected",
+      "outcomes": [
+        "passed"
+      ],
+      "retries": 0
+    },
+    {
+      "file": "verification/browser/product.spec.ts",
+      "title": "a delayed thread response cannot appear after switching workspaces",
+      "status": "expected",
+      "outcomes": [
+        "passed"
+      ],
+      "retries": 0
+    }
+  ]
+}
