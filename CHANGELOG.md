@@ -2,6 +2,12 @@
 
 All notable changes to ClearDesk. Dates use Europe/Budapest.
 
+## Unreleased
+
+### Fixed
+
+- `npm run validate:demo` no longer uses the owner's demo database. Each run seeds a fresh synthetic state in `.local/acceptance/<run>` (selected through the strictly validated `CLEARDESK_STATE`), so repeated runs cannot exhaust the 100-conversation cap and the owner's instance keeps its mode. The secret scan also covers acceptance states. ([record](docs/verification/isolated-acceptance/README.md))
+
 ## v0.1.1 — 19 November 2026
 
 First public release. It contains all changes made after the local v0.1.0 tag.

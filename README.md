@@ -115,7 +115,7 @@ For the complete offline acceptance flow after setup:
 npm run validate:demo
 ```
 
-It runs the checks, restarts only the owned instance in fixture mode, evaluates actual local retrieval, generates a fresh security rehearsal and runs the browser journeys. Matching Playwright Chromium is a prerequisite as described below. It spends no Gemini request.
+It runs the checks, then seeds a fresh synthetic state in `.local/acceptance/<run>` with its own generated accounts, runs that instance in fixture mode on the usual ports, evaluates actual local retrieval, generates a fresh security rehearsal and runs the browser journeys. Your own demo data, credentials and mode are not used or changed; if your instance was running, it is restarted afterwards. Old acceptance states are kept for inspection and can be deleted by hand. Matching Playwright Chromium is a prerequisite as described below. It spends no Gemini request.
 
 Individual commands are also available:
 

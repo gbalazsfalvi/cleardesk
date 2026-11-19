@@ -4,7 +4,7 @@
 
 Run commands from the project root. `npm run bootstrap` installs the pinned dependencies, prepares the embedding cache, provisions generated synthetic accounts and builds the app. Stop an existing ClearDesk instance before bootstrapping again. It does not require Docker, a database server or a provider key for fixture mode.
 
-`npm run demo` performs setup/build/start in one command. `npm run validate:demo` performs full offline acceptance, restarts the owned instance in fixture mode, and creates fresh retrieval/security reports plus browser observations. It intentionally changes the active mode to fixture and makes no provider generation request.
+`npm run demo` performs setup/build/start in one command. `npm run validate:demo` performs full offline acceptance in an isolated synthetic state (`.local/acceptance/<run>`, selected through `CLEARDESK_STATE`) and creates fresh retrieval/security reports plus browser observations. The owner's demo database, credentials and mode are untouched; a running owner instance is stopped for the run and restarted in its previous mode. It makes no provider generation request.
 
 `npm run up` starts the authenticated app on `127.0.0.1:4280` and the private data adapter on `127.0.0.1:4281`. Only the app is a browser entry point. `npm run stop` verifies the recorded process command lines before stopping them, waits for the sockets to drain and refuses to interfere with an unrecognized replacement process. Occupied ports are errors, not a reason to kill another project's processes.
 
