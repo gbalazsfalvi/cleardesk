@@ -1,6 +1,10 @@
 import { defineConfig } from '@playwright/test';
-const runDirectory =
-  'artifacts/runs/browser/' + new Date().toISOString().replaceAll(/[:.]/g, '-') + '-' + process.pid;
+// Workers inherit this value, so every journey in one invocation shares the same run directory.
+const runDirectory = (process.env.CLEARDESK_BROWSER_RUN ??=
+  'artifacts/runs/browser/' +
+  new Date().toISOString().replaceAll(/[:.]/g, '-') +
+  '-' +
+  process.pid);
 
 export default defineConfig({
   testDir: './verification/browser',

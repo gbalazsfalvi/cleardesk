@@ -1,14 +1,15 @@
-import { readFileSync, mkdirSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
 import { test, expect } from '@playwright/test';
 import type { Page } from '@playwright/test';
+import { capturePath, prepareCaptureDirectory } from './captures.js';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
 const demo = JSON.parse(readFileSync(join(root, '.local/private/demo-accounts.json'), 'utf8')) as {
   accounts: { username: string; password: string }[];
 };
-mkdirSync(join(root, 'docs/images'), { recursive: true });
+const captures = prepareCaptureDirectory(root);
 async function login(page: Page, username: string) {
   const account = demo.accounts.find((item) => item.username === username)!;
   await page.goto('/');
@@ -66,14 +67,18 @@ test('member questions, trusted sources, history and safe document rendering', a
   page.on('pageerror', () => failures.push('browser-error'));
   await login(page, 'alex');
   await expect(page.getByText('Offline fixture', { exact: true })).toBeVisible();
-  await page.screenshot({ path: join(root, 'docs/images/workspace-fixture.png'), fullPage: true });
+  await expect(page.locator('.composer-toolbar > span').first()).toHaveText(
+    /^\d+ accessible sources\s*·\s*Northstar Studio$/,
+    { useInnerText: true },
+  );
+  await page.screenshot({ path: capturePath(captures, 'workspace-fixture.png'), fullPage: true });
   await page.getByRole('button', { name: /GET SETTLED/ }).click();
   await expect(page.getByText('Source-backed', { exact: true })).toBeVisible();
   await expect(page.locator('.message.assistant')).toContainText('Offline fixture');
   await page.locator('.source-chip').first().click();
   await expect(page.getByText('Current access checked', { exact: true })).toBeVisible();
   await page.screenshot({
-    path: join(root, 'docs/images/answer-and-source-fixture.png'),
+    path: capturePath(captures, 'answer-and-source-fixture.png'),
     fullPage: true,
   });
   await page.getByRole('button', { name: 'Close source' }).click();
@@ -97,8 +102,12 @@ test('member questions, trusted sources, history and safe document rendering', a
 test('dual-workspace navigation clears prior content and mobile layout fits', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await login(page, 'sam');
+  // Sam's Harbor view has exactly one source; the narrow toolbar hides the workspace label.
+  await expect(page.locator('.composer-toolbar > span').first()).toHaveText('1 accessible source', {
+    useInnerText: true,
+  });
   await page.screenshot({
-    path: join(root, 'docs/images/mobile-workspace-fixture.png'),
+    path: capturePath(captures, 'mobile-workspace-fixture.png'),
     fullPage: true,
   });
   expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
@@ -140,7 +149,7 @@ test('administrator ingests and removes a document through human-only controls',
   await page.getByRole('button', { name: 'Add to knowledge' }).click();
   await expect(page.getByRole('button', { name: /^Browser verification checklist/ })).toBeVisible();
   await page.screenshot({
-    path: join(root, 'docs/images/knowledge-admin-fixture.png'),
+    path: capturePath(captures, 'knowledge-admin-fixture.png'),
     fullPage: true,
   });
   await page

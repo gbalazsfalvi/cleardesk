@@ -1,4 +1,4 @@
-import { copyFileSync, readFileSync, mkdirSync, writeFileSync } from 'node:fs';
+import { readFileSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash, randomUUID } from 'node:crypto';
@@ -113,11 +113,10 @@ test('bounded-live-browser: actual Gemini answer and trusted source', async ({ p
     await page.locator('.source-chip').filter({ hasText: 'Travel & expenses' }).first().click();
     await expect(page.getByText('Current access checked', { exact: true })).toBeVisible();
     record.checks.sourceOpenedWithCurrentAccess = true;
-    mkdirSync(join(root, 'docs/images'), { recursive: true });
-    const screenshot = join(root, 'docs/images/live-travel-expenses.png');
+    // The capture stays in this run; a reviewed copy may later be promoted into documentation.
+    const screenshot = join(directory, 'screenshot.png');
     await page.screenshot({ path: screenshot, fullPage: true });
-    copyFileSync(screenshot, join(directory, 'screenshot.png'));
-    record.screenshot = 'docs/images/live-travel-expenses.png';
+    record.screenshot = null;
     record.capture = 'screenshot.png';
     record.screenshotSha256 = createHash('sha256').update(readFileSync(screenshot)).digest('hex');
     const after = budget.snapshot().spent;
