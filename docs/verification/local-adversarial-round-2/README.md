@@ -1,0 +1,47 @@
+# Local adversarial review, round 2
+
+19 November 2026, after the v0.1.1 release. An authorized read-only code review of the owner's own ClearDesk reference, with synthetic data on loopback only. Three reviewers covered the Python data service, the TypeScript API boundary and client, and the model/tool/provenance layer.
+
+## Headline
+
+No confidentiality or integrity break was found: no cross-workspace or HR document access, no forgeable citation through the real API, no path to store an unverified answer. The authorization boundaries, parameterized SQL, per-turn citation registry, revision re-check at finalization, safe-Markdown rendering and CSRF checks held under review.
+
+The review found availability (local denial-of-service) defects and one transport-gate bypass with low practical impact, plus minor robustness issues. Each confirmed item below was fixed with a regression test that failed before the change. Items are reproduced by reading and by unit/integration tests; no finding required a confidentiality fix.
+
+## Fixed in this round
+
+| #   | Finding                                                                                                                                                                                                                                                                                                                       | Severity                                                                                                  | Fix                                                                                                                                                                                                                                                    | Regression                                                                   |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------- |
+| 1   | The in-memory rate limiter returned 429 for **every** key once its table held more than 1000 entries. The chat key also included the URL workspace id, which is only checked to be a UUID before the key is counted, so forged workspace ids could fill the table and lock out login, session and chat for everyone.          | Medium (local DoS)                                                                                        | The limiter never rejects a key already inside its window under table pressure; only a brand-new key can be refused, and only after expired entries are evicted. The chat key is now the actor id alone, removing attacker-controlled key cardinality. | `apps/api/tests/security.test.ts`, `apps/api/tests/turn-composition.test.ts` |
+| 2   | The 6-per-minute chat limit could be bypassed by changing the case of the workspace UUID's hex letters, because the key used the raw path and the database normalized it back.                                                                                                                                                | Low–medium                                                                                                | Same actor-only key as #1 removes the workspace id from the key entirely.                                                                                                                                                                              | `apps/api/tests/turn-composition.test.ts`                                    |
+| 3   | The counted provider transport skipped its closed tool-namespace check when the response body began with a byte-order mark (`JSON.parse` threw and the `catch` swallowed it), while the SDK stripped the BOM and dispatched the call. Provider-executed `toolCall` and inline `executableCode` parts were also not inspected. | Medium (gate bypass; small real impact, since Mastra registers only two tools and re-validates arguments) | The transport strips a leading BOM before parsing, fails closed on a non-empty unparseable body, and rejects any response part carrying `toolCall` or `executableCode`.                                                                                | `apps/api/tests/provider-budget.test.ts`                                     |
+| 4   | Cancelling a turn whose id used upper-case hex did not abort the running model call (the in-memory controller map is keyed by the canonical lower-case id), so the call ran until its 30-second timeout, holding a concurrency slot and, in live mode, a generation attempt. Only the owner's own turn was affected.          | Low–medium                                                                                                | The cancel route looks up the controller by the lower-cased turn id.                                                                                                                                                                                   | `apps/api/tests/cancellation.test.ts`                                        |
+| 5   | Duplicate citations were accepted, inflating the displayed source count and producing duplicate React keys.                                                                                                                                                                                                                   | Low                                                                                                       | `gateAnswer` collapses citations to one entry per chunk after the provenance check.                                                                                                                                                                    | `apps/api/tests/scoped-tools.test.ts`                                        |
+| 6   | A question of 500 leading whitespace characters, or one that split a surrogate pair at character 500, made the opening search query fail its schema **after** the turn was created, leaving a stuck `PROVIDER_ERROR` turn.                                                                                                    | Low (robustness)                                                                                          | The opening query trims first and avoids splitting a surrogate pair at the limit.                                                                                                                                                                      | `apps/api/tests/turn-composition.test.ts`                                    |
+
+## Noted, not changed in this round
+
+These are defense-in-depth or design observations, not exploited weaknesses; they are recorded for a future review:
+
+- No absolute session expiry: an actively used session renews indefinitely. Anonymous sessions share the one 500-session cap.
+- Audit events do not cover login, logout, conversation creation or source reads.
+- Soft-deleted documents and their vectors are retained and do not count toward the storage limits.
+- Inherited conversation dependencies are not capped, so a long conversation can reach the 24-chunk context limit and then fail every further turn. Real, availability-only, and fixing it well needs a history-trimming design decision.
+- The private service does not independently require a CSRF token (it relies on the API); it matters only if the service key leaks.
+- The Vite dev origin `http://127.0.0.1:4282` is accepted in the production build.
+
+## Scope and limits
+
+## Verification after the fixes
+
+Clean working tree at source revision `702dcf8` (the commit that carries these fixes), on the owner's Windows workstation, with no model generation request:
+
+- `npm run verify`: 83 TypeScript tests (9 new regressions) and 72 Python tests, strict types, formatting, Ruff, production build and the private-secret scan passed.
+- `npm run validate:demo` in an isolated synthetic state: 15/15 deterministic security cases ([report](acceptance/security/report.md)), 5/5 known-answer retrieval with one scope control, six offline browser journeys.
+- `npm run assess:http`: 26/26 loopback HTTP scenarios, generation delta 0 ([report](acceptance/http/report.json)).
+
+Both reports identify revision `702dcf8` with a clean tree; they are byte-for-byte copies with their original `SHA256SUMS`. The owner's private state and conversation counts were unchanged, and the instance was restarted in its previous live mode.
+
+## Scope and limits
+
+This is a bounded second review, not an exhaustive penetration test or a certification. It establishes no universal prompt-injection resistance. It ran on the owner's Windows workstation against synthetic data; the fixes are covered by unit and integration tests and by the isolated offline acceptance run above. The reviewers' full candidate lists are retained under the project's private notes.

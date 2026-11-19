@@ -4,6 +4,15 @@ All notable changes to ClearDesk. Dates use Europe/Budapest.
 
 ## Unreleased
 
+### Security
+
+A second local adversarial review ([record](docs/verification/local-adversarial-round-2/README.md)) found no confidentiality or authorization break. It fixed availability and robustness defects, each with a failing-first regression:
+
+- The in-memory rate limiter no longer returns 429 for every key when its table is full, and the chat limit is keyed on the actor alone, so forged or re-cased workspace ids can neither flood nor bypass it.
+- The counted provider transport enforces its closed tool namespace even when the response starts with a byte-order mark, fails closed on an unparseable body, and rejects provider-executed and inline-code response parts.
+- Cancelling a turn whose id uses upper-case hex now aborts the running call.
+- Duplicate citations are collapsed to one per chunk, and the opening search query is a trimmed, surrogate-safe slice.
+
 ### Fixed
 
 - `npm run validate:demo` no longer uses the owner's demo database. Each run seeds a fresh synthetic state in `.local/acceptance/<run>` (selected through the strictly validated `CLEARDESK_STATE`), so repeated runs cannot exhaust the 100-conversation cap and the owner's instance keeps its mode. The secret scan also covers acceptance states. ([record](docs/verification/isolated-acceptance/README.md))
