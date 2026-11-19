@@ -32,9 +32,14 @@ export function scopedTools(client: KnowledgeClient, token: string, prefix: stri
 /** Provenance check only: source membership does not prove the model's semantic accuracy. */
 export function gateAnswer(output: unknown, registry: Map<string, SourceChunk>): VerifiedAnswer {
   const answer = modelAnswer.parse(output);
+  const seen = new Set<string>();
+  const citations: typeof answer.citations = [];
   for (const citation of answer.citations) {
     if (registry.get(citation.chunkId)?.documentId !== citation.documentId)
       throw new Error('UNVERIFIED_RESPONSE');
+    if (seen.has(citation.chunkId)) continue;
+    seen.add(citation.chunkId);
+    citations.push(citation);
   }
-  return answer;
+  return { ...answer, citations };
 }

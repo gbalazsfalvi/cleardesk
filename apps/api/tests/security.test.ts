@@ -61,4 +61,12 @@ describe('bounded local admission', () => {
     now = 60001;
     expect(limiter.consume('actor', 2)).toBe(true);
   });
+  it('never rejects an established key when a flood saturates the window table', () => {
+    const limiter = new RateLimit(() => 0);
+    expect(limiter.consume('actor:established', 6)).toBe(true);
+    // A flood of distinct keys (e.g. forged workspace ids) within one window.
+    for (let index = 0; index < 1100; index++) limiter.consume('flood:' + index, 6);
+    // The established key is still inside its window and under its limit, so it must pass.
+    expect(limiter.consume('actor:established', 6)).toBe(true);
+  });
 });

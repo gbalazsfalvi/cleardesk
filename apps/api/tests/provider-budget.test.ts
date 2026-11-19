@@ -57,6 +57,55 @@ describe('persistent generation admission', () => {
       expect(new ProviderBudget(path, 12).snapshot().spent).toBe(1);
     }
   });
+  it('enforces the closed tool namespace when the provider body carries a byte-order mark', async () => {
+    // The SDK strips a leading BOM and dispatches the call, so the gate must see the same content.
+    const path = ledger();
+    const upstream = vi.fn().mockResolvedValue(
+      new Response(
+        '﻿' +
+          JSON.stringify({
+            candidates: [
+              { content: { parts: [{ functionCall: { name: 'readFile', args: { path: 'x' } } }] } },
+            ],
+          }),
+      ),
+    );
+    await expect(
+      createBudgetedFetch(new ProviderBudget(path, 12), upstream)(endpoint, {
+        method: 'POST',
+        body,
+      }),
+    ).rejects.toThrow('UNVERIFIED_RESPONSE');
+  });
+  it('rejects an unparseable non-empty provider body instead of passing it to the SDK', async () => {
+    const path = ledger();
+    const upstream = vi.fn().mockResolvedValue(new Response('not a json body'));
+    await expect(
+      createBudgetedFetch(new ProviderBudget(path, 12), upstream)(endpoint, {
+        method: 'POST',
+        body,
+      }),
+    ).rejects.toThrow('UNVERIFIED_RESPONSE');
+  });
+  it('rejects provider-executed tool-call and executable-code response parts', async () => {
+    for (const part of [
+      { toolCall: { toolType: 'readFile', id: 'a', args: {} } },
+      { executableCode: { language: 'PYTHON', code: 'print(1)' } },
+    ]) {
+      const path = ledger();
+      const upstream = vi
+        .fn()
+        .mockResolvedValue(
+          new Response(JSON.stringify({ candidates: [{ content: { parts: [part] } }] })),
+        );
+      await expect(
+        createBudgetedFetch(new ProviderBudget(path, 12), upstream)(endpoint, {
+          method: 'POST',
+          body,
+        }),
+      ).rejects.toThrow('UNVERIFIED_RESPONSE');
+    }
+  });
   it('counts retries and survives reconstruction without refunding a failed request', async () => {
     const path = ledger();
     const upstream = vi.fn().mockRejectedValue(new Error('transport failed'));

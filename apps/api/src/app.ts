@@ -51,6 +51,22 @@ const safeDetails: Record<string, string> = {
   CORPUS_LIMIT: 'The local demonstration capacity has been reached.',
 };
 
+/**
+ * The opening retrieval query is a bounded, well-formed slice of the question. Trimming first
+ * avoids an all-whitespace slice, and the surrogate guard avoids splitting an emoji at the limit;
+ * both would otherwise fail the tool schema only after the turn had been created.
+ */
+export function searchQuery(question: string): string {
+  let text = question.trim();
+  if (text.length > LIMITS.searchCharacters) {
+    let end = LIMITS.searchCharacters;
+    const code = text.charCodeAt(end - 1);
+    if (code >= 0xd800 && code <= 0xdbff) end -= 1;
+    text = text.slice(0, end).trim();
+  }
+  return text;
+}
+
 /** This is the only browser API. Mastra is deliberately not mounted as a server. */
 export function createApp(options: Options) {
   const app = new Hono<{ Variables: Variables }>();
@@ -307,8 +323,9 @@ export function createApp(options: Options) {
     const conversation = uuid.parse(c.req.param('conversation'));
     const token = c.get('token');
     const actor = c.get('session').actor!.id;
-    if (!rate.consume('chat:' + actor + ':' + workspace, 6))
-      throw new DataError('RATE_LIMITED', 429);
+    // Key on the actor only: the workspace id comes from the URL and is not yet known to belong to
+    // the user, so including it would let forged or re-cased ids inflate or evade the limit.
+    if (!rate.consume('chat:' + actor, 6)) throw new DataError('RATE_LIMITED', 429);
     const release = admission.acquire(actor);
     let prefix = '';
     const controller = new AbortController();
@@ -325,7 +342,7 @@ export function createApp(options: Options) {
         c.req.raw.signal,
       ]);
       const tools = scopedTools(client, token, prefix);
-      const chunks = await tools.search({ query: body.question.slice(0, 500), limit: 4 });
+      const chunks = await tools.search({ query: searchQuery(body.question), limit: 4 });
       await client.request(prefix + '/check', token, {});
       const result = await options.runner.run({
         question: body.question,
@@ -397,7 +414,8 @@ export function createApp(options: Options) {
       c.get('token'),
       {},
     );
-    active.get(turn)?.abort();
+    // The in-memory controllers are keyed by the canonical lower-case turn id from storage.
+    active.get(turn.toLowerCase())?.abort();
     return c.json(reply);
   });
   app.notFound((c) => c.json({ code: 'NOT_FOUND', detail: 'This route is not available.' }, 404));

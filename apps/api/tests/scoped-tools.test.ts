@@ -61,4 +61,16 @@ describe('scoped tool boundary', () => {
       ).kind,
     ).toBe('answer');
   });
+  it('collapses duplicate citations to one entry per chunk', () => {
+    const registry = new Map([[chunkId, chunk]]);
+    const result = gateAnswer(
+      {
+        kind: 'answer',
+        answer: 'Sourced',
+        citations: Array.from({ length: 6 }, () => ({ documentId, chunkId })),
+      },
+      registry,
+    );
+    expect(result.citations).toEqual([{ documentId, chunkId }]);
+  });
 });

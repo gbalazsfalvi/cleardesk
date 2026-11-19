@@ -201,13 +201,20 @@ export function createBudgetedFetch(
         pieces.push(part.value);
       }
     const bytes = Buffer.concat(pieces);
+    // The SDK decodes the body with a BOM-stripping TextDecoder, so the gate must read the same
+    // content. A non-empty body the gate cannot parse must never be forwarded to the SDK.
+    let text = bytes.toString('utf8');
+    if (text.charCodeAt(0) === 0xfeff) text = text.slice(1);
     let metadata: Record<string, unknown> = {};
-    try {
-      const value: unknown = JSON.parse(bytes.toString('utf8'));
+    if (text.length > 0) {
+      let value: unknown;
+      try {
+        value = JSON.parse(text);
+      } catch {
+        throw new Error('UNVERIFIED_RESPONSE');
+      }
       if (value && typeof value === 'object' && !Array.isArray(value))
         metadata = value as Record<string, unknown>;
-    } catch {
-      /* The SDK validates the actual body. */
     }
     const usage = metadata.usageMetadata as Record<string, unknown> | undefined;
     const providerError = (metadata.error as { status?: unknown } | undefined)?.status;
@@ -229,6 +236,10 @@ export function createBudgetedFetch(
       for (const candidate of metadata.candidates) {
         if (!Array.isArray(candidate?.content?.parts)) continue;
         for (const part of candidate.content.parts) {
+          // Only model-proposed functionCall parts are allowed; provider-executed tool calls and
+          // inline code execution are not part of the closed namespace.
+          if (part && typeof part === 'object' && ('toolCall' in part || 'executableCode' in part))
+            throw new Error('UNVERIFIED_RESPONSE');
           if (!part?.functionCall) continue;
           const call = part.functionCall;
           if (call.name === 'searchKnowledge') {

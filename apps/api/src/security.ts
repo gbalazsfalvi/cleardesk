@@ -4,13 +4,15 @@ export class RateLimit {
   constructor(private readonly clock = Date.now) {}
   consume(key: string, maximum: number, windowMs = 60000): boolean {
     const now = this.clock();
-    if (this.windows.size > 1000) {
-      for (const [id, item] of this.windows)
-        if (now - item.start >= windowMs) this.windows.delete(id);
-      if (this.windows.size > 1000) return false;
-    }
     let item = this.windows.get(key);
     if (!item || now - item.start >= windowMs) {
+      // A brand-new window is the only thing table pressure may refuse; an established key
+      // inside its window is never rejected just because a flood of other keys filled the map.
+      if (!item && this.windows.size >= 1000) {
+        for (const [id, existing] of this.windows)
+          if (now - existing.start >= windowMs) this.windows.delete(id);
+        if (this.windows.size >= 1000) return false;
+      }
       item = { start: now, count: 0 };
       this.windows.set(key, item);
     }
