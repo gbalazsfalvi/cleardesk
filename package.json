@@ -27,7 +27,7 @@
     "test:browser:live": "node scripts/cleardesk.mjs live-smoke",
     "assess:http": "node --import tsx verification/http-assessment.mjs",
     "build": "npm run build --workspace @cleardesk/contracts && npm run build --workspace @cleardesk/api && npm run build --workspace @cleardesk/web",
-    "typecheck": "tsc -p packages/contracts/tsconfig.json --noEmit && tsc -p apps/api/tsconfig.json --noEmit && tsc -p apps/web/tsconfig.json --noEmit && tsc -p verification/tsconfig.json --noEmit",
+    "typecheck": "npm run build --workspace @cleardesk/contracts && tsc -p apps/api/tsconfig.json --noEmit && tsc -p apps/web/tsconfig.json --noEmit && tsc -p verification/tsconfig.json --noEmit",
     "test": "vitest run",
     "test:browser": "playwright test",
     "format:check": "prettier --check apps packages scripts verification docs .github *.md *.json *.ts",
