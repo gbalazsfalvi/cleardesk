@@ -47,7 +47,7 @@ def main() -> None:
 
     request = urllib.request.Request(
         "https://huggingface.co/api/models/" + REPOSITORY + "/revision/" + REVISION,
-        headers={"User-Agent": "ClearDesk-model-provenance/0.1.0"},
+        headers={"User-Agent": "ClearDesk-model-provenance/0.1.1"},
     )
     with urllib.request.urlopen(request, timeout=30) as response:
         metadata = json.load(response)

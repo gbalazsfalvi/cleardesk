@@ -207,7 +207,7 @@ def create_app(path: Path, service_key: str, embeddings) -> FastAPI:
 
     @app.get("/v1/status")
     async def status():
-        return {"status": "ready", "embeddingReady": embeddings.ready, "version": "0.1.0"}
+        return {"status": "ready", "embeddingReady": embeddings.ready, "version": "0.1.1"}
 
     @app.get("/v1/schema")
     async def schema():

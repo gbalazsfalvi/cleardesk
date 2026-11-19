@@ -1,6 +1,6 @@
 {
   "name": "@cleardesk/web",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -8,7 +8,7 @@
     "dev": "vite --host 127.0.0.1 --port 4282"
   },
   "dependencies": {
-    "@cleardesk/contracts": "0.1.0",
+    "@cleardesk/contracts": "0.1.1",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "react-markdown": "10.1.0",

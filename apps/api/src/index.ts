@@ -51,7 +51,7 @@ server.on('listening', () =>
       app: 'ClearDesk',
       url: 'http://127.0.0.1:4280',
       mode: runtime.mode,
-      version: '0.1.0',
+      version: '0.1.1',
     }),
   ),
 );
