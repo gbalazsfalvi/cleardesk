@@ -4,6 +4,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { provenance } from './report.js';
+import { applicationAttempts, ledgerDigest } from './ledger-observation.js';
 
 const root = process.cwd();
 const stage = process.argv[2] ?? 'observe';
@@ -15,10 +16,9 @@ const protectedMarkers = [
   'HARBOR-CANARY-QUARTZ-91',
   'HARBOR-HR-CANARY-AMBER-42',
 ];
-const usage = () =>
-  JSON.parse(readFileSync('.local/private/application-usage.json', 'utf8')).attempts.length;
-const ledgerHash = () =>
-  createHash('sha256').update(readFileSync('.local/private/generation-budget.json')).digest('hex');
+// A fresh install has no ledger before its first live request; absence is compared explicitly.
+const usage = () => applicationAttempts('.local/private/application-usage.json');
+const ledgerHash = () => ledgerDigest('.local/private/generation-budget.json');
 const beforeUsage = usage(),
   beforeLedger = ledgerHash();
 const run = new Date().toISOString().replaceAll(/[:.]/g, '-') + '-' + randomUUID().slice(0, 8);
