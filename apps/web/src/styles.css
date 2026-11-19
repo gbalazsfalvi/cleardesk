@@ -1543,7 +1543,7 @@ button {
     gap: 4px;
   }
   .composer-toolbar .toolbar-separator,
-  .composer-toolbar .toolbar-separator + span {
+  .composer-toolbar .toolbar-workspace {
     display: none;
   }
   .composer-note {

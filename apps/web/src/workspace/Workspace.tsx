@@ -27,6 +27,7 @@ import type {
 } from '@cleardesk/contracts';
 import { request } from '../api.js';
 import { ScopeChanged, describeError as describe } from '../errors.js';
+import { countLabel } from '../format.js';
 import { SafeMarkdown } from '../SafeMarkdown.js';
 import { Brand } from '../components/Brand.js';
 import { Ingest } from '../knowledge/Ingest.js';
@@ -587,9 +588,9 @@ export function Workspace({ session, onLogout }: { session: SessionView; onLogou
                     <BookOpen size={14} />
                     {knowledgeLoading
                       ? 'Loading knowledge…'
-                      : documents.length + ' accessible sources'}
+                      : countLabel(documents.length, 'accessible source')}
                     <span className="toolbar-separator">·</span>
-                    {workspace.name}
+                    <span className="toolbar-workspace">{workspace.name}</span>
                   </span>
                   {busy ? (
                     <button
@@ -657,7 +658,7 @@ export function Workspace({ session, onLogout }: { session: SessionView; onLogou
                 <div className="library-summary">
                   <span>
                     <BookOpen size={17} />
-                    {documents.length} accessible documents
+                    {countLabel(documents.length, 'accessible document')}
                   </span>
                   <span>
                     <ShieldCheck size={15} />
