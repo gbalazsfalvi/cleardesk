@@ -9,9 +9,11 @@ import { KnowledgeClient } from './data-client.js';
 import { fixtureRunner } from './ai/fixture-runner.js';
 import { mastraRunner } from './ai/mastra-runner.js';
 import { applicationUsage } from './ai/provider-budget.js';
+import { stateDirectory } from './state.js';
 
 const root = fileURLToPath(new URL('../../../', import.meta.url));
-const runtime = JSON.parse(readFileSync(join(root, '.local/private/runtime.json'), 'utf8')) as {
+const privateState = join(stateDirectory(root), 'private');
+const runtime = JSON.parse(readFileSync(join(privateState, 'runtime.json'), 'utf8')) as {
   serviceKey: string;
   mode: 'live' | 'fixture';
   instanceId: string;
@@ -27,8 +29,8 @@ if (existsSync(envFile)) {
 }
 if (runtime.mode === 'live' && !apiKey) throw new Error('PROVIDER_KEY_REQUIRED');
 const budget = applicationUsage(
-  join(root, '.local/private/application-usage.json'),
-  join(root, '.local/private/generation-budget.json'),
+  join(privateState, 'application-usage.json'),
+  join(privateState, 'generation-budget.json'),
 );
 const app = createApp({
   client: new KnowledgeClient('http://127.0.0.1:4281', runtime.serviceKey),

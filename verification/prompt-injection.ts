@@ -1,4 +1,5 @@
 /** Explicit local adversarial exercise. No attack mode or privilege bypass exists in the product. */
+import { stateDirectory } from '../apps/api/src/state.js';
 import { createHash, randomUUID } from 'node:crypto';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -19,8 +20,12 @@ const runId = new Date().toISOString().replaceAll(/[:.]/g, '-') + '-' + randomUU
 const output = join(root, 'artifacts/runs/prompt-injection', runId);
 mkdirSync(output, { recursive: true });
 const snapshot = provenance(root);
-const runtime = JSON.parse(readFileSync(join(root, '.local/private/runtime.json'), 'utf8'));
-const demo = JSON.parse(readFileSync(join(root, '.local/private/demo-accounts.json'), 'utf8')) as {
+const runtime = JSON.parse(
+  readFileSync(join(stateDirectory(root), 'private', 'runtime.json'), 'utf8'),
+);
+const demo = JSON.parse(
+  readFileSync(join(stateDirectory(root), 'private', 'demo-accounts.json'), 'utf8'),
+) as {
   accounts: { username: string; password: string }[];
   workspaces: { northstar: string; harbor: string };
   documents: Record<string, string>;
@@ -165,11 +170,11 @@ async function ask(session: Session, question: string, title: string) {
 }
 const auditBudget = new ProviderBudget(join(output, 'generation-budget.json'), 12);
 const applicationBudget = new ProviderBudget(
-  join(root, '.local/private/application-usage.json'),
+  join(stateDirectory(root), 'private', 'application-usage.json'),
   null,
 );
 const applicationBefore = applicationBudget.snapshot().spent;
-const legacyPath = join(root, '.local/private/generation-budget.json');
+const legacyPath = join(stateDirectory(root), 'private', 'generation-budget.json');
 const legacyHash = createHash('sha256').update(readFileSync(legacyPath)).digest('hex');
 try {
   admin = await new Session(baseline).login('jordan');

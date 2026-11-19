@@ -1,4 +1,5 @@
 /** The only automated paid evaluation entry: synthetic questions, counted transport, no fallback. */
+import { stateDirectory } from '../apps/api/src/state.js';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -14,10 +15,14 @@ import { writeLiveReport } from './live-report.js';
 import type { LiveRecord } from './live-report.js';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
-const runtime = JSON.parse(readFileSync(join(root, '.local/private/runtime.json'), 'utf8')) as {
+const runtime = JSON.parse(
+  readFileSync(join(stateDirectory(root), 'private', 'runtime.json'), 'utf8'),
+) as {
   serviceKey: string;
 };
-const demo = JSON.parse(readFileSync(join(root, '.local/private/demo-accounts.json'), 'utf8')) as {
+const demo = JSON.parse(
+  readFileSync(join(stateDirectory(root), 'private', 'demo-accounts.json'), 'utf8'),
+) as {
   accounts: { username: string; password: string }[];
   workspaces: Record<string, string>;
   documents: Record<string, string>;
@@ -46,7 +51,10 @@ const cases = z
   .parse(JSON.parse(readFileSync(join(root, 'verification/live-cases.json'), 'utf8')));
 const scope = process.argv.includes('--smoke') ? 'smoke' : 'frozen-suite';
 const selected = scope === 'smoke' ? cases.slice(0, 1) : cases;
-const budget = new ProviderBudget(join(root, '.local/private/generation-budget.json'), 12);
+const budget = new ProviderBudget(
+  join(stateDirectory(root), 'private', 'generation-budget.json'),
+  12,
+);
 const budgetBefore = budget.snapshot().spent;
 const records: LiveRecord[] = [];
 let providerBlocked = false;

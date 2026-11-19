@@ -1,4 +1,5 @@
 /** Deterministic adversarial scenarios use the real Hono/data boundary and synthetic data only. */
+import { stateDirectory } from '../apps/api/src/state.js';
 import { readFileSync, mkdtempSync } from 'node:fs';
 import { removeOwnedTemporaryDirectory } from './owned-temporary.js';
 import { tmpdir } from 'node:os';
@@ -16,10 +17,14 @@ import type { CaseRecord } from './report.js';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const origin = 'http://127.0.0.1:4280';
-const runtime = JSON.parse(readFileSync(join(root, '.local/private/runtime.json'), 'utf8')) as {
+const runtime = JSON.parse(
+  readFileSync(join(stateDirectory(root), 'private', 'runtime.json'), 'utf8'),
+) as {
   serviceKey: string;
 };
-const demo = JSON.parse(readFileSync(join(root, '.local/private/demo-accounts.json'), 'utf8')) as {
+const demo = JSON.parse(
+  readFileSync(join(stateDirectory(root), 'private', 'demo-accounts.json'), 'utf8'),
+) as {
   accounts: { username: string; password: string }[];
   workspaces: Record<string, string>;
   documents: Record<string, string>;
@@ -149,7 +154,10 @@ const prerequisites = {
   fixtureOnly: false,
   browserAvailable: false,
 };
-const mainBudget = new ProviderBudget(join(root, '.local/private/generation-budget.json'), 12);
+const mainBudget = new ProviderBudget(
+  join(stateDirectory(root), 'private', 'generation-budget.json'),
+  12,
+);
 const before = mainBudget.snapshot().spent;
 const browser = await chromium.launch({ headless: true }).catch(() => null);
 prerequisites.browserAvailable = Boolean(browser);

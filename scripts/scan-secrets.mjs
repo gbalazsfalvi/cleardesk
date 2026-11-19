@@ -13,12 +13,24 @@ if (existsSync(env)) {
       secrets.push(line.slice(line.indexOf('=') + 1).trim());
   }
 }
-const runtime = join(root, '.local/private/runtime.json');
-if (existsSync(runtime)) secrets.push(JSON.parse(readFileSync(runtime, 'utf8')).serviceKey);
-const accountsFile = join(root, '.local/private/demo-accounts.json');
-if (existsSync(accountsFile)) {
-  for (const account of JSON.parse(readFileSync(accountsFile, 'utf8')).accounts)
-    secrets.push(account.password);
+// The owner's state and every isolated acceptance state hold generated private values.
+const acceptance = join(root, '.local/acceptance');
+const privateDirectories = [
+  join(root, '.local/private'),
+  ...(existsSync(acceptance)
+    ? readdirSync(acceptance, { withFileTypes: true })
+        .filter((item) => item.isDirectory())
+        .map((item) => join(acceptance, item.name, 'private'))
+    : []),
+];
+for (const directory of privateDirectories) {
+  const runtime = join(directory, 'runtime.json');
+  if (existsSync(runtime)) secrets.push(JSON.parse(readFileSync(runtime, 'utf8')).serviceKey);
+  const accountsFile = join(directory, 'demo-accounts.json');
+  if (existsSync(accountsFile)) {
+    for (const account of JSON.parse(readFileSync(accountsFile, 'utf8')).accounts ?? [])
+      secrets.push(account.password);
+  }
 }
 const files = execFileSync('git', ['ls-files', '-z'], { cwd: root, encoding: 'utf8' })
   .split('\0')

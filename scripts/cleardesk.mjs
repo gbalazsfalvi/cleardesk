@@ -2,16 +2,28 @@
 import { spawn, spawnSync, execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, writeFileSync, mkdirSync, openSync, closeSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { join, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { randomBytes, randomUUID } from 'node:crypto';
 import { connect } from 'node:net';
 import { setTimeout as pause } from 'node:timers/promises';
+import { stateDirectory } from './state.mjs';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
 const win = process.platform === 'win32';
 const python = join(root, 'services/knowledge/.venv', win ? 'Scripts/python.exe' : 'bin/python');
-const runtimePath = join(root, '.local/private/runtime.json');
-const processPath = join(root, '.local/private/processes.json');
+/** Runtime state files: the owner's `.local`, or one isolated `.local/acceptance/<name>`. */
+const statePaths = (value) => {
+  const state = stateDirectory(root, value);
+  return {
+    value: value || '',
+    runtime: join(state, 'private/runtime.json'),
+    processes: join(state, 'private/processes.json'),
+    accounts: join(state, 'private/demo-accounts.json'),
+    delivery: join(state, 'delivery'),
+  };
+};
+const ownerState = statePaths(process.env.CLEARDESK_STATE);
+const stateEnvironment = (paths) => (paths.value ? { CLEARDESK_STATE: paths.value } : {});
 const childEnvironment = () => {
   const allowed = [
     'PATH',
@@ -42,8 +54,8 @@ const childEnvironment = () => {
     HF_HUB_DISABLE_TELEMETRY: '1',
   };
 };
-mkdirSync(join(root, '.local/private'), { recursive: true });
-mkdirSync(join(root, '.local/delivery'), { recursive: true });
+mkdirSync(dirname(ownerState.runtime), { recursive: true });
+mkdirSync(ownerState.delivery, { recursive: true });
 
 function run(executable, args, cwd = root, extraEnvironment = {}) {
   const result = spawnSync(executable, args, {
@@ -61,10 +73,10 @@ function npm(args, extraEnvironment = {}) {
   else if (win) run('cmd.exe', ['/d', '/s', '/c', 'npm ' + args.join(' ')], root, extraEnvironment);
   else run('npm', args, root, extraEnvironment);
 }
-function runtime() {
-  if (!existsSync(runtimePath))
+function runtime(paths = ownerState) {
+  if (!existsSync(paths.runtime))
     writeFileSync(
-      runtimePath,
+      paths.runtime,
       JSON.stringify(
         {
           instanceId: randomUUID(),
@@ -76,7 +88,7 @@ function runtime() {
       ) + '\n',
       { mode: 0o600 },
     );
-  return JSON.parse(readFileSync(runtimePath, 'utf8'));
+  return JSON.parse(readFileSync(paths.runtime, 'utf8'));
 }
 const alive = (pid) => {
   try {
@@ -108,12 +120,12 @@ function owned(item) {
         normalized.includes('cleardesk.main:deployment_app') &&
         normalized.includes('4281');
 }
-async function stop() {
-  if (!existsSync(processPath)) {
+async function stop(paths = ownerState) {
+  if (!existsSync(paths.processes)) {
     console.log('No owned ClearDesk processes recorded.');
     return;
   }
-  const record = JSON.parse(readFileSync(processPath, 'utf8'));
+  const record = JSON.parse(readFileSync(paths.processes, 'utf8'));
   if (resolve(record.root) !== resolve(root))
     throw new Error('Process ownership manifest belongs to another directory.');
   for (const item of [...record.processes].reverse()) {
@@ -134,7 +146,7 @@ async function stop() {
   }
   if ((await portBusy(4280)) || (await portBusy(4281)))
     throw new Error('Ports remain occupied after shutdown. No unrecognized process was modified.');
-  writeFileSync(processPath, JSON.stringify({ root, processes: [] }, null, 2) + '\n');
+  writeFileSync(paths.processes, JSON.stringify({ root, processes: [] }, null, 2) + '\n');
   console.log('Stopped the recorded ClearDesk processes.');
 }
 const portBusy = (port) =>
@@ -146,10 +158,13 @@ const portBusy = (port) =>
     });
     socket.once('error', () => done(false));
   });
-async function up(build = true) {
-  const config = runtime();
-  if (existsSync(processPath)) {
-    const record = JSON.parse(readFileSync(processPath, 'utf8'));
+const running = (paths) =>
+  existsSync(paths.processes) &&
+  JSON.parse(readFileSync(paths.processes, 'utf8')).processes.some((item) => alive(item.pid));
+async function up(paths = ownerState, build = true) {
+  const config = runtime(paths);
+  if (existsSync(paths.processes)) {
+    const record = JSON.parse(readFileSync(paths.processes, 'utf8'));
     const living = record.processes.filter((item) => alive(item.pid));
     if (living.length) {
       if (living.length === 2 && living.every(owned)) {
@@ -164,14 +179,13 @@ async function up(build = true) {
   }
   if ((await portBusy(4280)) || (await portBusy(4281)))
     throw new Error('A required port is occupied. No existing process was modified.');
-  if (!existsSync(python) || !existsSync(join(root, '.local/private/demo-accounts.json')))
+  if (!existsSync(python) || !existsSync(paths.accounts))
     throw new Error('Run npm run bootstrap first.');
-  const demoState = JSON.parse(
-    readFileSync(join(root, '.local/private/demo-accounts.json'), 'utf8'),
-  );
+  const demoState = JSON.parse(readFileSync(paths.accounts, 'utf8'));
   if (demoState.phase && demoState.phase !== 'COMPLETE')
     throw new Error('Demo initialization is incomplete. Run npm run bootstrap to resume it.');
   if (build) npm(['run', 'build']);
+  mkdirSync(paths.delivery, { recursive: true });
   const record = { root, instanceId: config.instanceId, processes: [] };
   for (const item of [
     {
@@ -199,10 +213,10 @@ async function up(build = true) {
       cwd: root,
     },
   ]) {
-    const log = openSync(join(root, '.local/delivery/' + item.kind + '-server.log'), 'a');
+    const log = openSync(join(paths.delivery, item.kind + '-server.log'), 'a');
     const child = spawn(item.executable, item.args, {
       cwd: item.cwd,
-      env: { ...childEnvironment(), NODE_ENV: 'production' },
+      env: { ...childEnvironment(), ...stateEnvironment(paths), NODE_ENV: 'production' },
       detached: true,
       windowsHide: true,
       stdio: ['ignore', log, log],
@@ -210,7 +224,7 @@ async function up(build = true) {
     closeSync(log);
     if (!child.pid) throw new Error('Unable to start the owned ' + item.kind + ' service.');
     record.processes.push({ kind: item.kind, pid: child.pid });
-    writeFileSync(processPath, JSON.stringify(record, null, 2) + '\n', { mode: 0o600 });
+    writeFileSync(paths.processes, JSON.stringify(record, null, 2) + '\n', { mode: 0o600 });
     child.unref();
   }
   for (let count = 0; count < 120; count++) {
@@ -224,15 +238,12 @@ async function up(build = true) {
     if (record.processes.some((item) => !alive(item.pid))) break;
     await pause(250);
   }
-  await stop();
+  await stop(paths);
   throw new Error('ClearDesk did not become ready. Review the private service logs.');
 }
 
 function bootstrap() {
-  if (
-    existsSync(processPath) &&
-    JSON.parse(readFileSync(processPath, 'utf8')).processes.some((item) => alive(item.pid))
-  )
+  if (running(ownerState))
     throw new Error('ClearDesk is running. Run npm run stop before bootstrapping.');
   runtime();
   if (!existsSync(python)) run('python', ['-m', 'venv', join(root, 'services/knowledge/.venv')]);
@@ -247,10 +258,53 @@ function bootstrap() {
     'services/knowledge/requirements.lock',
   ]);
   run(python, ['scripts/prepare_embeddings.py']);
-  run(python, ['scripts/seed_demo.py']);
+  run(python, ['scripts/seed_demo.py'], root, stateEnvironment(ownerState));
   npm(['run', 'build']);
   console.log(
-    'Bootstrap complete. Generated demo passwords are in .local/private/demo-accounts.json.',
+    'Bootstrap complete. Generated demo passwords are in ' +
+      ownerState.accounts.slice(root.length).replaceAll('\\', '/') +
+      '.',
+  );
+}
+
+/**
+ * Offline acceptance never runs against the owner's demo data. Each run seeds a fresh synthetic
+ * state in .local/acceptance/<run>, exercises it on the usual ports, keeps it for inspection and
+ * then restarts the owner's instance, if it was running, in its own unchanged mode.
+ */
+async function validate() {
+  if (ownerState.value)
+    throw new Error('Run acceptance from the owner state, not an isolated one.');
+  run(process.execPath, ['scripts/cleardesk.mjs', 'verify']);
+  const ownerWasRunning = running(ownerState);
+  const name =
+    new Date().toISOString().replaceAll(/[:.]/g, '-') + '-' + randomBytes(3).toString('hex');
+  const acceptance = statePaths('.local/acceptance/' + name);
+  mkdirSync(dirname(acceptance.runtime), { recursive: true });
+  if (runtime(acceptance).mode !== 'fixture')
+    throw new Error('Acceptance state must use fixtures.');
+  const environment = stateEnvironment(acceptance);
+  run(python, ['scripts/seed_demo.py'], root, environment);
+  await stop(ownerState);
+  let failure = null;
+  try {
+    await up(acceptance, false);
+    run(python, ['verification/retrieval_eval.py']);
+    run(process.execPath, ['--import', 'tsx', 'verification/rehearse.ts'], root, environment);
+    npm(['run', 'test:browser'], environment);
+  } catch (error) {
+    failure = error;
+  }
+  try {
+    await stop(acceptance);
+  } finally {
+    if (ownerWasRunning) await up(ownerState, false);
+  }
+  if (failure) throw failure;
+  console.log(
+    'Local acceptance completed in an isolated fixture state (' +
+      name +
+      '); fresh reports are under artifacts/runs.',
   );
 }
 
@@ -258,28 +312,13 @@ try {
   const command = process.argv[2];
   if (command === 'bootstrap') bootstrap();
   else if (command === 'demo') {
-    const running =
-      existsSync(processPath) &&
-      JSON.parse(readFileSync(processPath, 'utf8')).processes.some((item) => alive(item.pid));
-    if (running) await up();
+    if (running(ownerState)) await up();
     else {
       bootstrap();
-      await up(false);
+      await up(ownerState, false);
     }
-  } else if (command === 'validate') {
-    run(process.execPath, ['scripts/cleardesk.mjs', 'verify']);
-    await stop();
-    writeFileSync(runtimePath, JSON.stringify({ ...runtime(), mode: 'fixture' }, null, 2) + '\n', {
-      mode: 0o600,
-    });
-    await up(false);
-    run(python, ['verification/retrieval_eval.py']);
-    run(process.execPath, ['--import', 'tsx', 'verification/rehearse.ts']);
-    npm(['run', 'test:browser']);
-    console.log(
-      'Local acceptance completed in fixture mode; fresh reports are under artifacts/runs.',
-    );
-  } else if (command === 'up') await up();
+  } else if (command === 'validate') await validate();
+  else if (command === 'up') await up();
   else if (command === 'stop') await stop();
   else if (command === 'verify') {
     npm(['run', 'format:check']);
@@ -312,16 +351,22 @@ try {
     if (!['fixture', 'live'].includes(mode)) throw new Error('Choose fixture or live mode.');
     await stop();
     const configuration = runtime();
-    writeFileSync(runtimePath, JSON.stringify({ ...configuration, mode }, null, 2) + '\n', {
+    writeFileSync(ownerState.runtime, JSON.stringify({ ...configuration, mode }, null, 2) + '\n', {
       mode: 0o600,
     });
     await up();
     if (command === 'live-smoke')
       npm(['run', 'test:browser', '--', '--grep', 'bounded-live-browser'], {
+        ...stateEnvironment(ownerState),
         CLEARDESK_LIVE_BROWSER: '1',
       });
   } else if (command === 'rehearse')
-    run(process.execPath, ['--import', 'tsx', 'verification/rehearse.ts']);
+    run(
+      process.execPath,
+      ['--import', 'tsx', 'verification/rehearse.ts'],
+      root,
+      stateEnvironment(ownerState),
+    );
   else if (command === 'retrieval') run(python, ['verification/retrieval_eval.py']);
   else throw new Error('Use bootstrap, up, stop, verify, rehearse, mode or live-smoke.');
 } catch (error) {

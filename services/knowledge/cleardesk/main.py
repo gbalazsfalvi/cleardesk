@@ -24,6 +24,7 @@ from .documents import DocumentStore, validate_document
 from .embeddings import LocalEmbeddings
 from .identity import IdentityStore
 from .owner import DataOwner
+from .state import state_directory
 
 
 class StrictBody(BaseModel):
@@ -386,9 +387,8 @@ def create_app(path: Path, service_key: str, embeddings) -> FastAPI:
 def deployment_app() -> FastAPI:
     """The launcher supplies an ignored runtime file, never secrets on command lines."""
     root = Path(__file__).resolve().parents[3]
-    runtime = json.loads((root / ".local/private/runtime.json").read_text("utf-8"))
+    state = state_directory(root)
+    runtime = json.loads((state / "private/runtime.json").read_text("utf-8"))
     os.environ["HF_HUB_DISABLE_IMPLICIT_TOKEN"] = "1"
     os.environ["HF_HUB_DISABLE_TELEMETRY"] = "1"
-    return create_app(
-        root / ".local/data/cleardesk.duckdb", runtime["serviceKey"], LocalEmbeddings(root)
-    )
+    return create_app(state / "data/cleardesk.duckdb", runtime["serviceKey"], LocalEmbeddings(root))

@@ -1,3 +1,4 @@
+import { stateDirectory } from '../../apps/api/src/state.js';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join } from 'node:path';
@@ -6,7 +7,9 @@ import type { Page } from '@playwright/test';
 import { capturePath, prepareCaptureDirectory } from './captures.js';
 
 const root = fileURLToPath(new URL('../../', import.meta.url));
-const demo = JSON.parse(readFileSync(join(root, '.local/private/demo-accounts.json'), 'utf8')) as {
+const demo = JSON.parse(
+  readFileSync(join(stateDirectory(root), 'private', 'demo-accounts.json'), 'utf8'),
+) as {
   accounts: { username: string; password: string }[];
 };
 const captures = prepareCaptureDirectory(root);

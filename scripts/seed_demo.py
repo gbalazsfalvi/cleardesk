@@ -14,6 +14,7 @@ from cleardesk.documents import DocumentStore, split_text
 from cleardesk.embeddings import LocalEmbeddings
 from cleardesk.identity import IdentityStore
 from cleardesk.policy import Role
+from cleardesk.state import state_directory
 
 ROOT = Path(__file__).resolve().parents[1]
 os.environ["HF_HUB_DISABLE_IMPLICIT_TOKEN"] = "1"
@@ -35,7 +36,8 @@ def checkpoint(target: Path, record: dict) -> None:
 
 async def main() -> None:
     root = ROOT
-    db = Database(root / ".local/data/cleardesk.duckdb")
+    state = state_directory(root)
+    db = Database(state / "data/cleardesk.duckdb")
     embeddings = LocalEmbeddings(root)
     try:
         identity = IdentityStore(db)
@@ -43,7 +45,7 @@ async def main() -> None:
         corpus_bytes = (root / "verification/corpus.json").read_bytes()
         corpus = json.loads(corpus_bytes)
         corpus_sha = hashlib.sha256(corpus_bytes).hexdigest()
-        target = root / ".local/private/demo-accounts.json"
+        target = state / "private/demo-accounts.json"
         if target.exists():
             record = json.loads(target.read_text("utf-8"))
             if record.get("phase", "COMPLETE") == "COMPLETE":
@@ -62,7 +64,7 @@ async def main() -> None:
                     json.dumps(
                         {
                             "demo": "already-initialized",
-                            "credentials": ".local/private/demo-accounts.json",
+                            "credentials": target.relative_to(root).as_posix(),
                         }
                     )
                 )
@@ -144,7 +146,7 @@ async def main() -> None:
                     "demo": "initialized",
                     "accounts": len(accounts),
                     "documents": len(document_ids),
-                    "credentials": ".local/private/demo-accounts.json",
+                    "credentials": target.relative_to(root).as_posix(),
                 }
             )
         )

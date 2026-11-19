@@ -1,3 +1,4 @@
+import { stateDirectory } from '../../apps/api/src/state.js';
 import { readFileSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -36,7 +37,10 @@ test('bounded-live-browser: actual Gemini answer and trusted source', async ({ p
     process.env.CLEARDESK_LIVE_BROWSER !== '1',
     'Explicit opt-in required; offline checks never spend a generation request.',
   );
-  const budget = new ProviderBudget(join(root, '.local/private/application-usage.json'), null);
+  const budget = new ProviderBudget(
+    join(stateDirectory(root), 'private', 'application-usage.json'),
+    null,
+  );
   const generatedAt = new Date().toISOString();
   const directory = join(
     root,
@@ -76,7 +80,9 @@ test('bounded-live-browser: actual Gemini answer and trusted source', async ({ p
       if (!request.url().startsWith('http://127.0.0.1:4280/'))
         external.push(new URL(request.url()).hostname);
     });
-    const demo = JSON.parse(readFileSync(join(root, '.local/private/demo-accounts.json'), 'utf8'));
+    const demo = JSON.parse(
+      readFileSync(join(stateDirectory(root), 'private', 'demo-accounts.json'), 'utf8'),
+    );
     const account = demo.accounts.find((item: { username: string }) => item.username === 'jordan');
     await page.goto('/');
     await page.getByLabel('Username', { exact: true }).fill(account.username);

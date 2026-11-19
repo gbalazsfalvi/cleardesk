@@ -70,3 +70,23 @@ def test_interrupted_initialization_can_resume_without_credential_reset(seed):
     assert resumed["phase"] == "COMPLETE"
     assert [item["password"] for item in resumed["accounts"]] == passwords
     assert len(resumed["documents"]) == 7
+
+
+def test_isolated_acceptance_state_never_touches_the_owner_state(seed, monkeypatch):
+    module, root, _ = seed
+    asyncio.run(module.main())
+    owner_manifest = (root / ".local/private/demo-accounts.json").read_bytes()
+    owner_database = (root / ".local/data/cleardesk.duckdb").stat().st_size
+    monkeypatch.setenv("CLEARDESK_STATE", ".local/acceptance/run-1")
+    asyncio.run(module.main())
+    isolated = root / ".local/acceptance/run-1"
+    assert json.loads((isolated / "private/demo-accounts.json").read_text())["phase"] == "COMPLETE"
+    assert (isolated / "data/cleardesk.duckdb").exists()
+    assert (root / ".local/private/demo-accounts.json").read_bytes() == owner_manifest
+    assert (root / ".local/data/cleardesk.duckdb").stat().st_size == owner_database
+    isolated_passwords = {
+        item["password"]
+        for item in json.loads((isolated / "private/demo-accounts.json").read_text())["accounts"]
+    }
+    owner_passwords = {item["password"] for item in json.loads(owner_manifest)["accounts"]}
+    assert not isolated_passwords & owner_passwords
